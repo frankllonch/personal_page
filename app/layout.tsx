@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import "./globals.css";
 
 export const metadata: Metadata = {
-  title: "Gabriel Ferraté - Engineer & Maker",
+  title: "Frank Llonch - Mathematical Engineer",
   description:
     "Barcelona-born, globally-based engineer and music nerd. I love to create things - hardware, software, robots, websites, and more.",
 };
