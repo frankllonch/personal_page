@@ -5,147 +5,158 @@ import { motion } from "framer-motion";
 import Image from "next/image";
 import dynamic from "next/dynamic";
 
-// Hydration-safe shapes
 const DecorativeBackground = dynamic(
-  () => import("./DecorativeBackground"),
+  () => import("@/components/DecorativeBackground"),
   { ssr: false }
 );
 
-interface BioCardProps {
-  photo: string;
-}
-
-export default function BioCard({ photo }: BioCardProps) {
+export default function BioCard() {
   const [flipped, setFlipped] = useState(false);
 
   return (
-    <motion.div
-      onClick={() => setFlipped(!flipped)}
-      whileHover={{ scale: 1.03 }}
-      transition={{ type: "spring", stiffness: 260, damping: 18 }}
-      className="
-        relative
-        w-full h-full
-        col-span-1 row-span-2
-        rounded-3xl overflow-hidden
-        cursor-pointer select-none
-        [transform-style:preserve-3d]
-        bg-[#0A0A0A] border border-[#F4D35E]/10 shadow-2xl
-      "
-      style={{
-        perspective: "1400px",
-      }}
+    <div
+      className="relative w-full h-full cursor-pointer select-none"
+      onClick={() => setFlipped((f) => !f)}
     >
-      {/* ------------------------------ */}
-      {/* FRONT FACE — character card    */}
-      {/* ------------------------------ */}
       <motion.div
-        className="
-          absolute inset-0 p-5
-          flex flex-col items-center
-          [backface-visibility:hidden]
-        "
+        className="relative w-full h-full"
         animate={{ rotateY: flipped ? 180 : 0 }}
-        transition={{ duration: 0.7, ease: "easeInOut" }}
+        transition={{ duration: 0.55, ease: [0.45, 0.15, 0.2, 1] }}
+        style={{ transformStyle: "preserve-3d" }}
       >
-        {/* subtle holofoil */}
-        <div className="
-          absolute inset-0 opacity-0 group-hover:opacity-100
-          bg-gradient-to-br from-[rgba(244,211,94,0.12)]
-          via-transparent to-[rgba(244,211,94,0.18)]
-          transition-all duration-700 z-0
-        " />
 
-        <DecorativeBackground count={10} />
+        {/* ====================================================== */}
+        {/* FRONT — MINIMAL Y2K CARD                              */}
+        {/* ====================================================== */}
+        <div
+          className="
+            absolute inset-0
+            rounded-3xl
+            bg-gradient-to-br from-black via-[#0A0A0A] to-[#1A1A1A]
+            shadow-[0_18px_50px_rgba(0,0,0,0.75)]
+            overflow-hidden
+            border border-white/15
+          "
+          style={{ backfaceVisibility: "hidden" }}
+        >
+          {/* subtle wash */}
+          <div className="
+            absolute inset-0
+            bg-[radial-gradient(circle_at_30%_20%,rgba(255,255,255,0.06),transparent_60%)]
+          " />
 
-        {/* IMAGE */}
-        <div className="relative z-10 mb-3">
-          <div className="w-28 h-28 rounded-2xl overflow-hidden shadow-xl relative">
-            <DecorativeBackground count={2} />
-            <Image
-              src={photo}
-              alt="Frank"
-              width={300}
-              height={300}
-              className="object-cover w-full h-full relative z-20"
-            />
+          {/* ================================================== */}
+          {/* TOP BAR — LV + HUMAN                               */}
+          {/* ================================================== */}
+          <div className="px-4 pt-3 pb-0 flex items-center justify-between">
+            <span className="text-[11px] uppercase tracking-widest text-gray-400">
+              LV. 22
+            </span>
+            <span className="
+              text-[10px] px-2 py-[2px]
+              rounded-full border border-white/15
+              text-gray-300 tracking-wider
+            ">
+              HUMAN
+            </span>
           </div>
-        </div>
 
-        {/* NAME */}
-        <p className="relative z-10 text-3xl font-extrabold tracking-tight mb-2">
-          Frank Llonch
-        </p>
-
-        {/* DESCRIPTION */}
-        <p className="relative z-10 text-sm text-gray-300 text-center px-3 leading-relaxed">
-          Barcelona-born engineering student, explorer, always building cool 
-          things and breaking stuff to learn. Tap to flip ↓
-        </p>
-
-        {/* SOCIALS */}
-        <div className="relative z-10 mt-6 flex gap-4">
-          {[
-            {
-              href: "https://github.com/frankllonch",
-              img: "/images/github-logo.png",
-              alt: "GitHub",
-            },
-            {
-              href: "https://linkedin.com/in/YOUR-LINK",
-              img: "/images/linkedin_logo_sq.png",
-              alt: "LinkedIn",
-            },
-            {
-              href: "mailto:llonchfrank@gmail.com",
-              img: "/images/email.png",
-              alt: "Email",
-            },
-          ].map((s, i) => (
-            <motion.a
-              key={i}
-              href={s.href}
-              target="_blank"
-              whileHover={{ scale: 1.15, y: -3 }}
-              transition={{ type: "spring", stiffness: 240, damping: 16 }}
+          {/* PORTRAIT */}
+          <div className="px-4 pt-2">
+            <div
               className="
-                h-10 w-10 flex items-center justify-center 
-                bg-black border border-white/20 
-                rounded-xl shadow-md relative overflow-hidden group
+                relative w-full aspect-[4/3]
+                rounded-3xl overflow-hidden bg-black
+                shadow-[0_12px_45px_rgba(0,0,0,0.9)]
+                border border-white/15
               "
             >
-              <DecorativeBackground count={1} />
+              <DecorativeBackground count={2} />
               <Image
-                src={s.img}
-                alt={s.alt}
-                width={22}
-                height={22}
-                className="z-20 relative"
+                fill
+                alt="Frank"
+                src="/images/pedro.png"
+                className="object-cover"
               />
-            </motion.a>
-          ))}
-        </div>
-      </motion.div>
+            </div>
+          </div>
 
-      {/* ------------------------------ */}
-      {/* BACK FACE — clean minimal "F."  */}
-      {/* ------------------------------ */}
-      <motion.div
-        className="
-          absolute inset-0 p-5
-          flex items-center justify-center
-          bg-[#0A0A0A] border border-[#F4D35E]/10
-          rounded-3xl shadow-inner
-          [backface-visibility:hidden]
-          rotate-y-180
-        "
-        animate={{ rotateY: flipped ? 0 : -180 }}
-        transition={{ duration: 0.7, ease: "easeInOut" }}
-      >
-        <p className="text-[6rem] font-black tracking-tighter text-[#F4D35E]">
-          F.
-        </p>
+          {/* NAME — pulled up */}
+          <p
+            className="
+              px-4 mt-3 text-2xl font-black tracking-tight text-white
+            "
+          >
+            Frank Llonch
+          </p>
+
+          {/* BIO TEXT BLOCK — pulled up, border removed */}
+          <p
+            className="
+              px-4 mt-3 text-[13px] text-gray-400 leading-relaxed
+            "
+          >
+            Engineer navigating data, systems, AI automation and chaotic
+            web experiments. Operates best at night.
+          </p>
+
+          {/* bottom glow */}
+          <div className="
+            absolute bottom-0 left-0 right-0 h-20
+            bg-[radial-gradient(circle_at_bottom,rgba(244,211,94,0.18),transparent_70%)]
+          " />
+        </div>
+
+        {/* ====================================================== */}
+        {/* BACK — GIANT “F” THAT ACTUALLY GROWS                  */}
+        {/* ====================================================== */}
+        <div
+          className="
+            absolute inset-0
+            rounded-3xl
+            bg-black
+            flex items-center justify-center
+            overflow-visible
+            border border-white/15
+          "
+          style={{
+            backfaceVisibility: "hidden",
+            transform: "rotateY(180deg)",
+          }}
+        >
+
+          {/* GIANT F */}
+          <motion.span
+            initial={{ scale: 1, opacity: 0.9 }}
+            animate={{
+              scale: [1, 1.07, 1],
+              opacity: [0.9, 1, 0.95],
+              x: [0, 1.2, -1.2, 0],
+            }}
+            transition={{
+              duration: 2.8,
+              repeat: Infinity,
+              ease: "easeInOut",
+            }}
+            className="
+              font-inter font-black
+              text-[#F4D35E]
+              drop-shadow-[0_0_60px_rgba(244,211,94,0.45)]
+              leading-none
+              pointer-events-none select-none
+              absolute
+            "
+            style={{
+              fontSize: "5vw",   // larger now
+              lineHeight: 1,
+              transformOrigin: "center",
+            }}
+          >
+            f
+          </motion.span>
+        </div>
+
       </motion.div>
-    </motion.div>
+    </div>
   );
 }

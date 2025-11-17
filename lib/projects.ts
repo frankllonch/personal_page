@@ -72,9 +72,9 @@ export interface ProjectData {
 
     {
       slug: "Drawings",
-      title: "Some of My Drawings",
+      title: "Arts and crafts",
       subtitle:
-        "A collection of my artwork and sketches. Because coding isn't my only talent.",
+        "A collection of my artwork and sketches. Because coding isn't my only talent. Trying to learn to animate too!",
       link: "https://www.instagram.com/notonlyfranks/",
       color: "bg-teal-500",
    
