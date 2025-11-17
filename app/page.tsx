@@ -19,6 +19,9 @@ import Timeline from "@/components/timeline";
 import { projects } from "@/lib/projects";
 import { works, education } from "@/lib/data";
 
+import PageReveal from "@/components/pagereveal";
+
+import BioCard from "@/components/bio_card";
 
 // -----------------------------
 //  STAGGERED GRID ENTRANCE
@@ -67,8 +70,8 @@ function handle3DTilt(
   const y = e.clientY - rect.top;
 
   // smoother + more natural
-  const rotateX = ((y - rect.height / 2) / 35) * -3;
-  const rotateY = ((x - rect.width / 2) / 35) * 3;
+  const rotateX = ((y - rect.height / 2) / 35) * -2;
+  const rotateY = ((x - rect.width / 2) / 35) * 2;
 
   setStyle({
     transform: `perspective(1200px)
@@ -94,12 +97,21 @@ export default function Home() {
   const currentYear = new Date().getFullYear();
 
   return (
-    <main className="min-h-screen bg-[#050A1A] text-white relative">
+    <main className="min-h-screen bg- text-white relative">
+      <PageReveal />   {/* 🔥 ADDED HERE */}
+
+
+      {/* Top-left signature */}
+      <div className="fixed top-4 left-6 z-[200] font-inter font-black text-xl tracking-tight opacity-80">
+        frank<span className="text-sky-200">.</span>
+      </div>
+
 
       {/* BACKGROUND SYSTEMS */}
       <CurvedGrid />
       <Particles />
       <GlowCursor />
+
 
 
       {/* ===================================================== */}
@@ -133,8 +145,8 @@ export default function Home() {
             }}
             transition={{ type: "spring", stiffness: 260, damping: 18 }}
             className="
-              bg-[#0D172F]
-              border border-white/10
+              bg-[#0A0A0A]
+              border border-[#F4D35E]/10
               rounded-3xl
               shadow-2xl
               relative
@@ -147,25 +159,32 @@ export default function Home() {
               col-span-1
               row-span-2
             "
+            onClick={() => window.open(project.link, "_blank")}
             style={{ transformPerspective: 1200 }}
+            onMouseMove={(e) =>
+              handle3DTilt(e, (s) => Object.assign(e.currentTarget.style, s))
+            }
+            onMouseLeave={(e) =>
+              reset3DTilt((s) => Object.assign(e.currentTarget.style, s))
+            }
           >
 
             {/* HOLOFOIL OVERLAY */}
             <div className="
               absolute inset-0
               bg-gradient-to-br
-              from-sky-500/20 
+              from-[rgba(244,211,94,0.12)]
               via-transparent 
-              to-indigo-500/30
+              to-[rgba(244,211,94,0.18)]
               opacity-0 group-hover:opacity-100
               transition-all duration-700
             "></div>
 
             {/* SHAPES */}
-            <DecorativeBackground count={6} />
+            <DecorativeBackground count={9} />
 
             {/* IMAGE */}
-            <div className="relative z-20 w-full flex justify-left mb-4">
+            <div className="relative z-20 w-full flex justify-center mb-4">
               <div className="w-24 h-24 md:w-28 md:h-28 rounded-2xl overflow-hidden shadow-xl relative">
                 <DecorativeBackground count={2} />
                 <Image
@@ -179,11 +198,13 @@ export default function Home() {
             </div>
 
             {/* TEXT */}
-            <div className="relative z-20 text-left px-1">
-              <p className="text-lg font-semibold">Hi, I'm Frank 👋</p>
+            <div className="relative z-20 text-bottom px-1">
+              <p className="text-3xl font-extrabold tracking-tight text-center mb-6">Hi, I'm Frank 👋</p>
               <p className="text-l mt-2 text-gray-300 leading-relaxed">
-                Barcelona-born engineering student building models, pipelines,
-                apps and automations that turn messy problems into clean systems.
+                Barcelona-born engineering student, learning enthusiast, and 
+                always looking to build cool stuff, not sure what yet. 
+                Fork this website if you like it!
+                Reach out if you want to buld stuff.
               </p>
             </div>
 
@@ -214,7 +235,7 @@ export default function Home() {
                   transition={{ type: "spring", stiffness: 240, damping: 16 }}
                   className="
                     h-10 w-10 flex items-center justify-center 
-                    bg-[#050A1A] border border-white/20 
+                    bg-black border border-white/20 
                     rounded-xl shadow-md relative overflow-hidden group
                   "
                 >
@@ -240,8 +261,8 @@ export default function Home() {
               key={project.slug}
               variants={tileVariants}
               className="
-                bg-[#0D172F]
-                border border-white/10
+                bg-[#0A0A0A]
+                border border-[#F4D35E]/10
                 rounded-3xl
                 shadow-xl
                 relative overflow-hidden
@@ -260,7 +281,9 @@ export default function Home() {
               <div className="
                 absolute inset-0
                 bg-gradient-to-br 
-                from-sky-400/15 via-transparent to-indigo-500/20
+                from-[rgba(244,211,94,0.12)]
+                via-transparent 
+                to-[rgba(244,211,94,0.18)]
                 opacity-0 group-hover:opacity-100
                 transition-all duration-700
               "></div>
@@ -278,7 +301,7 @@ export default function Home() {
       {/* 🔷 WORK EXPERIENCE                                    */}
       {/* ===================================================== */}
       <section className="py-10 max-w-7xl mx-auto px-6 relative z-10">
-        <h1 className="text-2xl font-semibold text-center mb-4">Work Experience</h1>
+        <h1 className="text-3xl font-extrabold tracking-tight text-center mb-6">Work Experience</h1>
         <Timeline items={works} />
       </section>
 
@@ -287,7 +310,7 @@ export default function Home() {
       {/* 🔷 EDUCATION                                          */}
       {/* ===================================================== */}
       <section className="py-10 max-w-7xl mx-auto px-6 relative z-10">
-        <h1 className="text-2xl font-semibold text-center mb-4">Education</h1>
+        <h1 className="text-3xl font-extrabold tracking-tight text-center mb-6">Education</h1>
         <Timeline items={education} />
       </section>
 

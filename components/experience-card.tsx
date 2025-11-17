@@ -28,10 +28,10 @@ export default function ExperienceCard({
       rel="noopener noreferrer"
       className="
         w-44 h-30   /* 🔥 same size always */
-        bg-[#0D172F]
+        bg-[#0A0A0A]
         rounded-xl p-3 flex flex-col
         shadow-lg hover:shadow-xl
-        border border-white/10
+        border border-[#F4D35E]/10
         transition duration-500
         relative group overflow-hidden
         hover:-translate-y-1 hover:scale-[1.02]

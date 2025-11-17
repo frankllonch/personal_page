@@ -40,8 +40,8 @@ export default function Project({
       transition={{ type: "spring", stiffness: 260, damping: 20 }}
       className="
         w-full h-full
-        bg-[#0D172F]
-        border border-white/10
+        bg-[#0A0A0A]
+        border border-[#F4D35E]/10
         rounded-xl p-4
         shadow-lg cursor-pointer
         hover:shadow-xl
@@ -104,7 +104,8 @@ export default function Project({
             key={i}
             className="
               text-[10px] uppercase px-2 py-1 mt-[1px]
-              bg-sky-500/20 border-l border-b border-white/20
+              bg-yellow-400/10
+              from-[#F4D35E]/10 to-[#E8B923]/15
               rounded-bl-md text-white
             "
           >

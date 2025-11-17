@@ -69,4 +69,14 @@ export interface ProjectData {
       color: "bg-teal-500",
       isUpcoming: true,
     },
+
+    {
+      slug: "Drawings",
+      title: "Some of My Drawings",
+      subtitle:
+        "A collection of my artwork and sketches. Because coding isn't my only talent.",
+      link: "https://www.instagram.com/notonlyfranks/",
+      color: "bg-teal-500",
+   
+    },
   ];

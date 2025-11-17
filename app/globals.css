@@ -1,58 +1,174 @@
 @import "tailwindcss";
 
+/* -------------------------------------------------------------------------- */
+/* 🔤 INTER — Local Font                                                      */
+/* -------------------------------------------------------------------------- */
+
 @font-face {
-  font-family: "Alliance";
-  src: url("/fonts/alliance-no-2-regular.woff2") format("woff2");
-  font-weight: normal;
+  font-family: "Inter";
+  src: url("/fonts/inter/Inter-Light.woff2") format("woff2");
+  font-weight: 300;
   font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "Inter";
+  src: url("/fonts/inter/Inter-LightItalic.woff2") format("woff2");
+  font-weight: 300;
+  font-style: italic;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "Inter";
+  src: url("/fonts/inter/Inter-Regular.woff2") format("woff2");
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "Inter";
+  src: url("/fonts/inter/Inter-Italic.woff2") format("woff2");
+  font-weight: 400;
+  font-style: italic;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "Inter";
+  src: url("/fonts/inter/Inter-Bold.woff2") format("woff2");
+  font-weight: 700;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "Inter";
+  src: url("/fonts/inter/Inter-BoldItalic.woff2") format("woff2");
+  font-weight: 700;
+  font-style: italic;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "Inter";
+  src: url("/fonts/inter/Inter-ExtraBold.woff2") format("woff2");
+  font-weight: 800;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "Inter";
+  src: url("/fonts/inter/Inter-ExtraBoldItalic.woff2") format("woff2");
+  font-weight: 800;
+  font-style: italic;
+  font-display: swap;
+}
+
+
+/* -------------------------------------------------------------------------- */
+/* 🎨 GLOBAL THEME — BLACK + UNSATURATED YELLOW                               */
+/* -------------------------------------------------------------------------- */
+
+:root {
+  --accent: #f4d35e;           /* soft, unsaturated yellow */
+  --accent-deep: #e8b923;      /* darker gold */
+  --accent-mute: rgba(244, 211, 94, 0.15);
+
+  --bg: #000000;               /* pure black */
+  --bg-card: #0a0a0a;          /* slightly lifted black for tiles */
+  --border: rgba(255, 255, 255, 0.08);
+
+  --text: #ffffff;
+  --text-muted: #dddddd;
 }
 
 html,
 body {
-  font-family: "Alliance", serif;
-  background: #ffffff;
-  color: #000000;
-}
-
-
-html.dark,
-body.dark {
-  background: #111111;
-  color: #ffffff;
-}
-
-.dark .card {
-  background: #1a1a1a;
-  border-color: #333333;
-  color: #f1f1f1;
+  background: var(--bg);
+  color: var(--text);
+  font-family: "Inter", sans-serif;
+  overflow-x: hidden;
 }
 
 html {
-  background: #050A1A;
+  background: #000000;
   color: white;
 }
 
 body {
-  background: #050A1A;
+  background: #000000;
   color: white;
-}
-
-h1, h2, h3, h4, h5, h6, p, span {
-  color: white;
-}
-
-a {
-  color: #8CB2FF; /* keep links bluish */
 }
 
 html,
 body {
-  background-color: #050a1a;
+  background-color: #000000;
   color: #ffffff;
 }
 
+/* -------------------------------------------------------------------------- */
+/* 🧩 TYPOGRAPHY                                                              */
+/* -------------------------------------------------------------------------- */
 
-/* HOLOFOIL SHIMMER BORDER */
+h1 {
+  font-size: 2.6rem;
+  font-weight: 700;
+  letter-spacing: -0.5px;
+  color: var(--text);
+}
+
+h2 {
+  font-size: 2rem;
+  font-weight: 600;
+  letter-spacing: -0.3px;
+  color: var(--text);
+}
+
+h3 {
+  font-size: 1.55rem;
+  font-weight: 500;
+  color: var(--text-muted);
+}
+
+p,
+span,
+li {
+  font-size: 1rem;
+  font-weight: 300;
+  line-height: 1.55;
+  color: var(--text-muted);
+}
+
+a {
+  color: var(--accent);
+  transition: opacity 0.2s ease;
+}
+
+a:hover {
+  opacity: 0.8;
+}
+
+
+/* -------------------------------------------------------------------------- */
+/* 🃏 CARD / TILE BASE STYLE                                                  */
+/* -------------------------------------------------------------------------- */
+
+.card {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  color: var(--text);
+  border-radius: 1rem;
+}
+
+
+/* -------------------------------------------------------------------------- */
+/* ✨ HOLOFOIL SHIMMER BORDER (YELLOW VERSION)                                 */
+/* -------------------------------------------------------------------------- */
+
 .holofoil-border {
   position: relative;
 }
@@ -63,34 +179,75 @@ body {
   inset: 0;
   border-radius: inherit;
   border: 2px solid transparent;
+
   background: linear-gradient(
       115deg,
-      rgba(0,255,255,0.5),
-      rgba(140,0,255,0.5),
-      rgba(0,255,255,0.5)
+      rgba(244, 211, 94, 0.8),
+      rgba(255, 255, 255, 0.5),
+      rgba(244, 211, 94, 0.8)
     )
     border-box;
+
   -webkit-mask:
     linear-gradient(#fff 0 0) content-box,
     linear-gradient(#fff 0 0);
   -webkit-mask-composite: xor;
   mask-composite: exclude;
+
   opacity: 0;
-  transition: opacity 0.4s ease;
+  transition: opacity 0.5s ease;
 }
 
 .holofoil-border:hover::after {
   opacity: 1;
 }
 
+
+/* -------------------------------------------------------------------------- */
+/* 🌟 GLOWING CURSOR (Yellow)                                                */
+/* -------------------------------------------------------------------------- */
+
 .glow-cursor {
   position: fixed;
-  width: 20px;
-  height: 20px;
-  background: radial-gradient(circle, #00ccff 0%, transparent 70%);
+  width: 22px;
+  height: 22px;
+  background: radial-gradient(circle, var(--accent) 0%, transparent 70%);
   border-radius: 50%;
   pointer-events: none;
   transform: translate(-50%, -50%);
   mix-blend-mode: screen;
-  z-index: 50;
+  z-index: 9999;
+  transition: transform 0.1s;
+}
+
+
+/* -------------------------------------------------------------------------- */
+/* 🔳 GENERAL RESETS                                                          */
+/* -------------------------------------------------------------------------- */
+
+* {
+  box-sizing: border-box;
+}
+
+img,
+video {
+  display: block;
+  max-width: 100%;
+}
+
+button {
+  font-family: inherit;
+}
+
+:root {
+  --accent: #f4d35e;          
+  --accent-deep: #e8b923;     
+  --accent-mute: rgba(244, 211, 94, 0.15);
+
+  --bg: #000000;               /* pure black now */
+  --bg-card: #0a0a0a;
+  --border: rgba(255, 255, 255, 0.08);
+
+  --text: #ffffff;
+  --text-muted: #dddddd;
 }
