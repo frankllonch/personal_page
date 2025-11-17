@@ -7,7 +7,7 @@ interface ExperienceCardProps {
   degree: string;
   country: string;
   year: number;
-  color: string;
+  color?: string;  // kept optional for compatibility
   href: string;
   image: string;
 }
@@ -17,7 +17,6 @@ export default function ExperienceCard({
   degree,
   country,
   year,
-  color,
   href,
   image,
 }: ExperienceCardProps) {
@@ -27,7 +26,7 @@ export default function ExperienceCard({
       target="_blank"
       rel="noopener noreferrer"
       className="
-        w-44 h-30   /* 🔥 same size always */
+        w-44 h-30
         bg-[#0A0A0A]
         rounded-xl p-3 flex flex-col
         shadow-lg hover:shadow-xl
@@ -37,7 +36,7 @@ export default function ExperienceCard({
         hover:-translate-y-1 hover:scale-[1.02]
       "
     >
-      {/* shapes */}
+      {/* decorative shapes */}
       <DecorativeBackground count={4} />
 
       {/* top row */}
