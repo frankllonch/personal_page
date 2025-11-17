@@ -1,50 +1,87 @@
 "use client";
 
-import React from "react";
+import React, { useEffect, useState } from "react";
+import { motion } from "framer-motion";
+
+interface Shape {
+  w: number;
+  h: number;
+  top: number;
+  left: number;
+  rot: number;
+  circle: boolean;
+  color: string;
+}
 
 export default function DecorativeBackground({ count = 4 }) {
-  const colors = [
-    "bg-[rgba(244,211,94,0.25)]",   // gold (soft)
-    "bg-[rgba(232,185,35,0.15)]",   // darker yellow
-    "bg-[rgba(255,255,255,0.18)]",  // soft white
-    "bg-[rgba(200,170,80,0.15)]",   // washed sand
-    "bg-[rgba(255,230,150,0.12)]",  // pale butter yellow
-    // 🧱 NEW – Browns (earthy, subtle)
-    "bg-[rgba(110,72,36,0.70)]",     // warm brown
-    "bg-[rgba(150,100,50,0.70)]",    // light brown
+  const [shapes, setShapes] = useState<Shape[]>([]);
 
-    // ❤️ NEW – Reds (soft, muted, non-aggressive)
-    "bg-[rgba(180,60,60,0.70)]",     // muted red
-    "bg-[rgba(140,50,50,0.70)]",     // deep soft red
-  ];
+  useEffect(() => {
+    const palette = [
+      "rgba(244,211,94,0.25)",
+      "rgba(232,185,35,0.15)",
+      "rgba(255,255,255,0.18)",
+      "rgba(200,170,80,0.15)",
+      "rgba(255,230,150,0.12)",
+      "rgba(110,72,36,0.70)",
+      "rgba(150,100,50,0.70)",
+      "rgba(180,60,60,0.70)",
+      "rgba(140,50,50,0.70)",
+    ];
+
+    setShapes(
+      Array.from({ length: count }).map(() => {
+        const size = Math.random() * 65 + 45;
+
+        return {
+          w: size,
+          h: Math.random() > 0.5 ? size : size * 0.7,
+          top: Math.random() * 80,
+          left: Math.random() * 80,
+          rot: Math.random() * 360,
+          circle: Math.random() > 0.5,
+          color: palette[Math.floor(Math.random() * palette.length)],
+        };
+      })
+    );
+  }, [count]);
 
   return (
     <>
-      {[...Array(count)].map((_, i) => {
-        const isCircle = Math.random() > 0.5;
-        const size = Math.random() * 70 + 40;
-
-        return (
-          <div
-            key={i}
-            className={`
-              absolute ${colors[i % colors.length]} opacity-60
-              transform transition duration-500
-              group-hover:scale-110 group-hover:rotate-6
-              pointer-events-none
-            `}
-            style={{
-              width: `${size}px`,
-              height: `${isCircle ? size : size * 0.7}px`,
-              top: `${Math.random() * 80}%`,
-              left: `${Math.random() * 80}%`,
-              borderRadius: isCircle ? "9999px" : "10px",
-              transform: `rotate(${Math.random() * 360}deg)`,
-              mixBlendMode: "screen",
+      {shapes.map((s, i) => (
+        <motion.div
+          key={i}
+          initial={{ opacity: 0, scale: 0.8 }}
+          animate={{ opacity: 0.6, scale: 1 }}
+          transition={{ duration: 1.4, ease: "easeOut" }}
+          className="absolute pointer-events-none transition-all duration-500 
+                     group-hover:scale-110 group-hover:rotate-6"
+          style={{
+            width: s.w,
+            height: s.h,
+            top: `${s.top}%`,
+            left: `${s.left}%`,
+            borderRadius: s.circle ? "9999px" : "12px",
+            background: s.color,
+            mixBlendMode: "screen",
+            transform: `rotate(${s.rot}deg)`,
+          }}
+        >
+          {/* Soft floating movement */}
+          <motion.div
+            className="w-full h-full"
+            animate={{
+              x: [0, 6, -6, 0],
+              y: [0, -4, 4, 0],
+            }}
+            transition={{
+              repeat: Infinity,
+              duration: 18,
+              ease: "easeInOut",
             }}
           />
-        );
-      })}
+        </motion.div>
+      ))}
     </>
   );
 }
