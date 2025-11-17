@@ -10,17 +10,24 @@ export default function Particles({ color = "#F4D35E" }: ParticlesProps) {
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
 
   useEffect(() => {
+    if (typeof window === "undefined") return; // SSR guard
+
     const canvas = canvasRef.current;
-    if (!canvas) return; // SSR + safety
+    if (!canvas) return;
+
     const ctx = canvas.getContext("2d");
     if (!ctx) return;
 
     let w = 0;
     let h = 0;
 
+    // 🔥 FIX: reacquire canvas safely INSIDE resize
     function resize() {
-      w = canvas.width = window.innerWidth;
-      h = canvas.height = window.innerHeight;
+      const c = canvasRef.current;
+      if (!c) return;
+
+      w = c.width = window.innerWidth;
+      h = c.height = window.innerHeight;
     }
 
     resize();
@@ -30,11 +37,13 @@ export default function Particles({ color = "#F4D35E" }: ParticlesProps) {
       x: Math.random() * w,
       y: Math.random() * h,
       size: Math.random() * 2 + 1,
-      speedX: Math.random() * 0.2 - 0.2,
-      speedY: Math.random() * 0.2 - 0.2,
+      speedX: Math.random() * 0.4 - 0.2,
+      speedY: Math.random() * 0.4 - 0.2,
     }));
 
     function animate() {
+      if (!ctx) return;
+
       ctx.clearRect(0, 0, w, h);
 
       particles.forEach((p) => {
