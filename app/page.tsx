@@ -2,6 +2,7 @@
 
 import { motion } from "framer-motion";
 import Image from "next/image";
+import React from "react";
 
 import dynamic from "next/dynamic";
 
@@ -23,7 +24,7 @@ import PageReveal from "@/components/pagereveal";
 import BioCard from "@/components/bio_card";
 
 
-// GRID + TILT VARIANTS
+// GRID VARIANTS
 const containerVariants = {
   hidden: { opacity: 0 },
   visible: {
@@ -41,17 +42,14 @@ const tileVariants = {
   },
 };
 
-function tileTilt(index: number) {
-  const dirs = [
-    { rotateX: 3, rotateY: -3 },
-    { rotateX: -3, rotateY: 3 },
-    { rotateX: 2, rotateY: 2 },
-    { rotateX: -2, rotateY: -2 },
-  ];
-  return dirs[index % dirs.length];
-}
 
-function handle3DTilt(e: React.MouseEvent, setStyle: React.CSSProperties) {
+// -----------------------------
+// POINTER-BASED TILT (TYPESAFE)
+// -----------------------------
+function handle3DTilt(
+  e: React.MouseEvent,
+  apply: (s: React.CSSProperties) => void
+) {
   const rect = (e.currentTarget as HTMLElement).getBoundingClientRect();
   const x = e.clientX - rect.left;
   const y = e.clientY - rect.top;
@@ -59,19 +57,23 @@ function handle3DTilt(e: React.MouseEvent, setStyle: React.CSSProperties) {
   const rotateX = ((y - rect.height / 2) / 30) * -2;
   const rotateY = ((x - rect.width / 2) / 30) * 2;
 
-  setStyle({
-    transform: `perspective(1200px) rotateX(${rotateX}deg) rotateY(${rotateY}deg) scale(1.04)`
+  apply({
+    transform: `perspective(1200px) rotateX(${rotateX}deg) rotateY(${rotateY}deg) scale(1.04)`,
   });
 }
 
-function reset3DTilt(setStyle: any) {
-  setStyle({
+function reset3DTilt(apply: (s: React.CSSProperties) => void) {
+  apply({
     transform: "perspective(1200px) rotateX(0deg) rotateY(0deg) scale(1)",
-    transition: "transform 200ms ease"
+    transition: "transform 200ms ease",
   });
 }
 
 
+
+// ====================================================================
+// PAGE
+// ====================================================================
 export default function Home() {
   const currentYear = new Date().getFullYear();
 
@@ -87,7 +89,7 @@ export default function Home() {
           frank<span className="text-[#F4D35E]">.</span>
         </div>
 
-        {/* socials */}
+        {/* SOCIAL ICONS */}
         <div className="flex flex-col gap-3">
           {[
             { href: "https://github.com/frankllonch", img: "/images/github-logo.png", alt: "GitHub" },
@@ -112,7 +114,8 @@ export default function Home() {
         </div>
       </div>
 
-      {/* BACKGROUND ELEMENTS */}
+
+      {/* BACKGROUND SYSTEMS */}
       <CurvedGrid />
       <Particles color="#F4D35E" />
       <GlowCursor />
@@ -121,11 +124,19 @@ export default function Home() {
 
       {/* GRID */}
       <section className="max-w-7xl mx-auto px-6 pt-20 pb-12 relative z-10">
-      <h1 className="text-3xl font-extrabold tracking-tight text-center mb-6">
+        
+        <h1 className="text-3xl font-extrabold tracking-tight text-center mb-6">
           Check out my craft!
         </h1>
+
         <motion.div
-          className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 auto-rows-[200px]"
+          className="
+            grid grid-cols-1
+            sm:grid-cols-2
+            lg:grid-cols-4
+            gap-6
+            auto-rows-[200px]
+          "
           variants={containerVariants}
           initial="hidden"
           animate="visible"
@@ -136,8 +147,8 @@ export default function Home() {
             variants={tileVariants}
             className="
               col-span-1 row-span-2
-              bg-black border border-black/20 rounded-3xl
-              relative overflow-hidden group p-1
+              bg-black border border-black/20 
+              rounded-3xl relative overflow-hidden group p-1
             "
             style={{ transformPerspective: 1200 }}
             onMouseMove={(e) => handle3DTilt(e, s => Object.assign(e.currentTarget.style, s))}
@@ -147,8 +158,8 @@ export default function Home() {
           </motion.div>
 
 
-          {/* PROJECTS */}
-          {projects.map((project, index) => (
+          {/* PROJECT TILES */}
+          {projects.map(project => (
             <motion.div
               key={project.slug}
               variants={tileVariants}
@@ -170,6 +181,8 @@ export default function Home() {
         </motion.div>
       </section>
 
+
+
       {/* WORK EXPERIENCE */}
       <section className="py-10 max-w-7xl mx-auto px-6 relative z-10">
         <h1 className="text-3xl font-extrabold tracking-tight text-center mb-6">
@@ -177,6 +190,7 @@ export default function Home() {
         </h1>
         <Timeline items={works} />
       </section>
+
 
       {/* EDUCATION */}
       <section className="py-10 max-w-7xl mx-auto px-6 relative z-10">
@@ -186,10 +200,10 @@ export default function Home() {
         <Timeline items={education} />
       </section>
 
+
       <footer className="py-10 text-center text-gray-500 text-sm">
         Frank Llonch © {currentYear}
       </footer>
-
     </main>
   );
 }
