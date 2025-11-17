@@ -1,6 +1,6 @@
 import React from "react";
 import Image from "next/image";
-import DecorativeBackground from "./decorative-background";
+import DecorativeBackground from "./DecorativeBackground";
 
 interface ExperienceCardProps {
   name: string;
@@ -26,21 +26,30 @@ export default function ExperienceCard({
       href={href}
       target="_blank"
       rel="noopener noreferrer"
-      className="w-48 bg-gray-100 rounded-xl p-3 flex flex-col items-start shadow-md hover:shadow-lg transition duration-500 relative overflow-hidden hover:rotate-6 hover:scale-105 transform group z-20 select-none text-gray-900"
+      className="
+        w-48 bg-white
+        rounded-xl p-3 flex flex-col items-start
+        shadow-sm hover:shadow-md
+        border border-gray-200
+        transition duration-500
+        relative group overflow-hidden
+        hover:-translate-y-1 hover:scale-[1.02]
+      "
     >
-      <DecorativeBackground color={color} count={3} />
+      {/* GEOMETRIC SHAPES (NEW) */}
+      <DecorativeBackground svg="/shapes/wave.svg" count={3} />
 
-      <div className="flex justify-start items-center space-x-2 z-10 relative">
+      <div className="flex justify-start items-center space-x-2 relative z-20">
         <div className="w-8 h-8 relative rounded-full overflow-hidden flex-none">
           <Image src={image} alt={name} fill className="object-contain" />
         </div>
         <div className="text-xs text-gray-500 uppercase">{name}</div>
       </div>
 
-      <div className="text-sm mt-2 text-left z-10 relative text-gray-900">
+      <div className="text-sm mt-2 text-left relative z-20 text-gray-900">
         {degree}
       </div>
-      <div className="text-sm text-blue-600 mt-1 z-10 relative font-medium">
+      <div className="text-sm text-blue-600 mt-1 relative z-20 font-medium">
         {country}, {year}
       </div>
     </a>

@@ -1,21 +1,24 @@
 import type { Metadata } from "next";
 import "./globals.css";
+import { ThemeProvider } from "next-themes";
 
 export const metadata: Metadata = {
   title: "Frank Llonch - Mathematical Engineer",
   description:
-    "Barcelona-born, globally-based engineer and music nerd. I love to create things - hardware, software, robots, websites, and more.",
+    "Barcelona-born engineering student building data systems, AI tools, and clean interfaces.",
 };
 
 export default function RootLayout({
   children,
-}: Readonly<{
+}: {
   children: React.ReactNode;
-}>) {
+}) {
   return (
-    <html lang="en">
-      <body className="antialiased">
-        {children}
+    <html lang="en" suppressHydrationWarning>
+      <body>
+        <ThemeProvider attribute="class" defaultTheme="light">
+          {children}
+        </ThemeProvider>
       </body>
     </html>
   );

@@ -1,7 +1,8 @@
 "use client";
 
 import React from "react";
-import DecorativeBackground from "./decorative-background";
+import { motion } from "framer-motion";
+import DecorativeBackground from "./DecorativeBackground";
 
 interface ProjectProps {
   title: string;
@@ -16,36 +17,47 @@ export default function Project({
   title,
   subtitle,
   link,
-  color,
   starred,
   isNew,
 }: ProjectProps) {
-  const handleClick = () => {
-    window.open(link, "_blank");
-  };
+  const handleClick = () => window.open(link, "_blank");
 
   return (
-    <div
+    <motion.div
       onClick={handleClick}
-      className="w-full bg-gray-100 rounded-xl p-4 shadow-md cursor-pointer hover:shadow-lg hover:scale-105 transition duration-500 ease-in-out transform hover:rotate-2 overflow-hidden group select-none relative"
+      whileHover={{ y: -4, scale: 1.02 }}
+      transition={{ type: "spring", stiffness: 300, damping: 20 }}
+      className="
+        w-full bg-white
+        border border-gray-200
+        rounded-xl p-4
+        shadow-sm cursor-pointer 
+        hover:shadow-lg
+        transition-all duration-300 
+        select-none relative group
+        overflow-hidden
+      "
     >
-      {/* Badge */}
+      <DecorativeBackground svg="/shapes/blob.svg" count={4} />
+
       {(starred || isNew) && (
         <div
-          className={`absolute top-0 right-0 text-xs rounded-bl-lg px-2 border-l border-gray-300 border-b z-10 py-px ${
-            isNew ? "bg-green-200" : "bg-yellow-200"
-          }`}
+          className={`
+            absolute top-0 right-0 text-xs uppercase px-2 py-1 z-20
+            ${isNew ? "bg-green-200" : "bg-yellow-200"}
+            border-l border-b border-gray-300 rounded-bl-md
+          `}
         >
-          {isNew ? "🎉 new" : "⭐️ starred"}
+          {isNew ? "new" : "starred"}
         </div>
       )}
 
-      <DecorativeBackground color={color} count={4} />
-
-      <div className="text-base font-bold mt-1 uppercase relative z-10 text-gray-900">
+      <div className="relative z-20 text-base font-semibold text-gray-900">
         {title}
       </div>
-      <div className="text-sm text-gray-800 mt-2 relative z-10">{subtitle}</div>
-    </div>
+      <div className="relative z-20 text-sm text-gray-600 mt-1">
+        {subtitle}
+      </div>
+    </motion.div>
   );
 }
