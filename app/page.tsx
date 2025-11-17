@@ -51,7 +51,7 @@ function tileTilt(index: number) {
   return dirs[index % dirs.length];
 }
 
-function handle3DTilt(e: React.MouseEvent, setStyle: any) {
+function handle3DTilt(e: React.MouseEvent, setStyle: React.CSSProperties) {
   const rect = (e.currentTarget as HTMLElement).getBoundingClientRect();
   const x = e.clientX - rect.left;
   const y = e.clientY - rect.top;
