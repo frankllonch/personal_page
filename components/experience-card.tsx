@@ -27,7 +27,7 @@ export default function ExperienceCard({
       target="_blank"
       rel="noopener noreferrer"
       className="
-        w-48 h-44   /* 🔥 same size always */
+        w-44 h-30   /* 🔥 same size always */
         bg-[#0D172F]
         rounded-xl p-3 flex flex-col
         shadow-lg hover:shadow-xl

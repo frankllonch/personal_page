@@ -45,3 +45,8 @@ a {
   color: #8CB2FF; /* keep links bluish */
 }
 
+html,
+body {
+  background-color: #050a1a;
+  color: #ffffff;
+}

@@ -27,7 +27,7 @@ export default function Project({
       whileHover={{ y: -4, scale: 1.02 }}
       transition={{ type: "spring", stiffness: 260, damping: 20 }}
       className="
-        w-full h-40               /* 🔥 FIXED TILE HEIGHT */
+        w-full h-full               /* 🔥 FIXED TILE HEIGHT */
         bg-[#0D172F]
         border border-white/10
         rounded-xl p-4
