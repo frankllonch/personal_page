@@ -37,8 +37,8 @@ export default function Particles({ color = "#F4D35E" }: ParticlesProps) {
       x: Math.random() * w,
       y: Math.random() * h,
       size: Math.random() * 2 + 1,
-      speedX: Math.random() * 0.4 - 0.2,
-      speedY: Math.random() * 0.4 - 0.2,
+      speedX: Math.random() * 0.2 - 0.2,
+      speedY: Math.random() * 0.2 - 0.2,
     }));
 
     function animate() {
