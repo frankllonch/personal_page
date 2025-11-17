@@ -21,24 +21,30 @@ import { works, education } from "@/lib/data";
 import PageReveal from "@/components/pagereveal";
 import BioCard from "@/components/bio_card";
 
-// Animation variants
-const containerVariants = {
+import type { Variants } from "framer-motion";
+
+const containerVariants: Variants = {
   hidden: { opacity: 0 },
   visible: {
     opacity: 1,
-    transition: { staggerChildren: 0.08 },
+    transition: {
+      staggerChildren: 0.08,
+      ease: [0.25, 0.1, 0.25, 1],
+    },
   },
 };
 
-const tileVariants = {
+const tileVariants: Variants = {
   hidden: { opacity: 0, y: 26 },
   visible: {
     opacity: 1,
     y: 0,
-    transition: { duration: 0.45, ease: "easeOut" },
+    transition: {
+      duration: 0.45,
+      ease: [0.25, 0.1, 0.25, 1],
+    },
   },
 };
-
 // Strong typing for style setter
 function handle3DTilt(
   e: React.MouseEvent<HTMLDivElement, MouseEvent>,
