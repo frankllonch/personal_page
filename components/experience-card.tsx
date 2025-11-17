@@ -27,29 +27,34 @@ export default function ExperienceCard({
       target="_blank"
       rel="noopener noreferrer"
       className="
-        w-48 bg-white
-        rounded-xl p-3 flex flex-col items-start
-        shadow-sm hover:shadow-md
-        border border-gray-200
+        w-48 h-44   /* 🔥 same size always */
+        bg-[#0D172F]
+        rounded-xl p-3 flex flex-col
+        shadow-lg hover:shadow-xl
+        border border-white/10
         transition duration-500
         relative group overflow-hidden
         hover:-translate-y-1 hover:scale-[1.02]
       "
     >
-      {/* GEOMETRIC SHAPES (NEW) */}
-      <DecorativeBackground svg="/shapes/wave.svg" count={3} />
+      {/* shapes */}
+      <DecorativeBackground count={4} />
 
-      <div className="flex justify-start items-center space-x-2 relative z-20">
-        <div className="w-8 h-8 relative rounded-full overflow-hidden flex-none">
-          <Image src={image} alt={name} fill className="object-contain" />
+      {/* top row */}
+      <div className="flex items-center space-x-2 relative z-20">
+        <div className="w-8 h-8 relative rounded-full overflow-hidden flex-none border border-white/20">
+          <Image src={image} alt={name} fill className="object-cover" />
         </div>
-        <div className="text-xs text-gray-500 uppercase">{name}</div>
+        <div className="text-xs text-gray-300 uppercase">{name}</div>
       </div>
 
-      <div className="text-sm mt-2 text-left relative z-20 text-gray-900">
+      {/* degree */}
+      <div className="text-sm mt-3 relative z-20 text-white">
         {degree}
       </div>
-      <div className="text-sm text-blue-600 mt-1 relative z-20 font-medium">
+
+      {/* location */}
+      <div className="text-xs text-blue-300 mt-1 relative z-20 font-medium">
         {country}, {year}
       </div>
     </a>
