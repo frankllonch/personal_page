@@ -50,3 +50,47 @@ body {
   background-color: #050a1a;
   color: #ffffff;
 }
+
+
+/* HOLOFOIL SHIMMER BORDER */
+.holofoil-border {
+  position: relative;
+}
+
+.holofoil-border::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  border: 2px solid transparent;
+  background: linear-gradient(
+      115deg,
+      rgba(0,255,255,0.5),
+      rgba(140,0,255,0.5),
+      rgba(0,255,255,0.5)
+    )
+    border-box;
+  -webkit-mask:
+    linear-gradient(#fff 0 0) content-box,
+    linear-gradient(#fff 0 0);
+  -webkit-mask-composite: xor;
+  mask-composite: exclude;
+  opacity: 0;
+  transition: opacity 0.4s ease;
+}
+
+.holofoil-border:hover::after {
+  opacity: 1;
+}
+
+.glow-cursor {
+  position: fixed;
+  width: 20px;
+  height: 20px;
+  background: radial-gradient(circle, #00ccff 0%, transparent 70%);
+  border-radius: 50%;
+  pointer-events: none;
+  transform: translate(-50%, -50%);
+  mix-blend-mode: screen;
+  z-index: 50;
+}

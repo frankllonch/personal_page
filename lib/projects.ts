@@ -19,7 +19,7 @@ export interface ProjectData {
         "Daily stock forecasting for Spain’s two banking gladiators. LSTMs, GRUs, pipelines, and way too many CSVs.",
       link: "https://bbvavssantander.streamlit.app",
       color: "bg-blue-500",
-      starred: true,
+      isNew: true,
     },
   
     {
