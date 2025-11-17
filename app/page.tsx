@@ -3,7 +3,12 @@
 import { motion } from "framer-motion";
 import Image from "next/image";
 
-import DecorativeBackground from "@/components/DecorativeBackground";
+import dynamic from "next/dynamic";
+
+const DecorativeBackground = dynamic(
+  () => import("@/components/DecorativeBackground"),
+  { ssr: false }
+);
 import CurvedGrid from "@/components/CurveGrid";
 import Particles from "@/components/particles";
 import GlowCursor from "@/components/GlowCursor";
@@ -62,8 +67,8 @@ function handle3DTilt(
   const y = e.clientY - rect.top;
 
   // smoother + more natural
-  const rotateX = ((y - rect.height / 2) / 35) * -1;
-  const rotateY = ((x - rect.width / 2) / 35) * 1;
+  const rotateX = ((y - rect.height / 2) / 35) * -3;
+  const rotateY = ((x - rect.width / 2) / 35) * 3;
 
   setStyle({
     transform: `perspective(1200px)
@@ -77,7 +82,7 @@ function reset3DTilt(setStyle: (s: any) => void) {
   setStyle({
     transform:
       "perspective(1200px) rotateX(0deg) rotateY(0deg) scale(1)",
-    transition: "transform 500ms ease",
+    transition: "transform 200ms ease",
   });
 }
 
@@ -187,7 +192,7 @@ export default function Home() {
               {[
                 {
                   href: "https://github.com/frankllonch",
-                  img: "/images/github_logo.png",
+                  img: "/images/github-logo.png",
                   alt: "GitHub",
                 },
                 {

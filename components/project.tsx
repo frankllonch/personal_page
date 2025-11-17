@@ -2,7 +2,13 @@
 
 import React from "react";
 import { motion } from "framer-motion";
-import DecorativeBackground from "./DecorativeBackground";
+import dynamic from "next/dynamic";
+
+// Hydration-safe DecorativeBackground
+const DecorativeBackground = dynamic(
+  () => import("./DecorativeBackground"),
+  { ssr: false }
+);
 
 interface ProjectProps {
   title: string;
@@ -45,79 +51,67 @@ export default function Project({
         flex flex-col justify-between
       "
     >
-      {/* floating shapes */}
+
+      {/* background shapes */}
       <DecorativeBackground count={5} />
 
-      {/* ====================================================== */}
-      {/* 🔥 STATUS + TAG LABELS (ONLY THIS VERSION)             */}
-      {/* ====================================================== */}
-      {(starred || isNew || isUpcoming || pinned || tags.length > 0) && (
-        <div className="absolute top-0 right-0 flex flex-col items-end z-20">
+      {/* STATUS TAGS (your exact style) */}
+      <div className="absolute top-0 right-0 flex flex-col items-end z-20">
 
-          {/* STATUS TAGS */}
-          {isNew && (
-            <div
-              className="
-                text-[10px] uppercase px-2 py-1
-                bg-green-500/30 border-l border-b border-white/20
-                rounded-bl-md text-white
-              "
-            >
-              NEW
-            </div>
-          )}
+        {isNew && (
+          <div className="
+            text-[10px] uppercase px-2 py-1
+            bg-green-500/30 border-l border-b border-white/20
+            rounded-bl-md text-white
+          ">
+            NEW
+          </div>
+        )}
 
-          {starred && !isNew && (
-            <div
-              className="
-                text-[10px] uppercase px-2 py-1
-                bg-yellow-500/30 border-l border-b border-white/20
-                rounded-bl-md text-white
-              "
-            >
-              STARRED
-            </div>
-          )}
+        {starred && (
+          <div className="
+            text-[10px] uppercase px-2 py-1
+            bg-yellow-500/30 border-l border-b border-white/20
+            rounded-bl-md text-white
+          ">
+            STARRED
+          </div>
+        )}
 
-          {isUpcoming && (
-            <div
-              className="
-                text-[10px] uppercase px-2 py-1
-                bg-purple-500/30 border-l border-b border-white/20
-                rounded-bl-md text-white
-              "
-            >
-              UPCOMING
-            </div>
-          )}
+        {isUpcoming && (
+          <div className="
+            text-[10px] uppercase px-2 py-1
+            bg-purple-500/30 border-l border-b border-white/20
+            rounded-bl-md text-white
+          ">
+            UPCOMING
+          </div>
+        )}
 
-          {pinned && (
-            <div
-              className="
-                text-[10px] uppercase px-2 py-1
-                bg-blue-500/30 border-l border-b border-white/20
-                rounded-bl-md text-white
-              "
-            >
-              PINNED
-            </div>
-          )}
+        {pinned && (
+          <div className="
+            text-[10px] uppercase px-2 py-1
+            bg-blue-500/30 border-l border-b border-white/20
+            rounded-bl-md text-white
+          ">
+            PINNED
+          </div>
+        )}
 
-          {/* CATEGORY TAGS */}
-          {tags.map((tag, i) => (
-            <div
-              key={i}
-              className="
-                text-[10px] uppercase px-2 py-1 mt-[1px]
-                bg-sky-500/20 border-l border-b border-white/20
-                rounded-bl-md text-white
-              "
-            >
-              {tag}
-            </div>
-          ))}
-        </div>
-      )}
+        {/* CATEGORY TAGS */}
+        {tags.map((tag, i) => (
+          <div
+            key={i}
+            className="
+              text-[10px] uppercase px-2 py-1 mt-[1px]
+              bg-sky-500/20 border-l border-b border-white/20
+              rounded-bl-md text-white
+            "
+          >
+            {tag}
+          </div>
+        ))}
+      </div>
 
       {/* TITLE */}
       <div className="relative z-20 text-base font-semibold text-white">
@@ -125,7 +119,7 @@ export default function Project({
       </div>
 
       {/* SUBTITLE */}
-      <div className="relative z-20 text-sm text-gray-300 mt-1 flex-1">
+      <div className="relative z-20 text-sm text-gray-300 mt-1">
         {subtitle}
       </div>
     </motion.div>
