@@ -244,7 +244,10 @@ export default function FaultyTerminal({
   ...rest
 }) {
   const containerRef = useRef<HTMLDivElement>(null);
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const programRef = useRef<any>(null);
+
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const rendererRef = useRef<any>(null);
 
   const mouseRef = useRef({ x: 0.5, y: 0.5 });
