@@ -1,16 +1,16 @@
 "use client";
 
-import React, { useEffect, useState } from "react";
 import { motion } from "framer-motion";
+import { useEffect, useState } from "react";
 
 interface Shape {
-  w: number;
-  h: number;
+  size: number;
   top: number;
   left: number;
   rot: number;
-  circle: boolean;
   color: string;
+  blur: number;
+  opacity: number;
 }
 
 export default function DecorativeBackground({ count = 4 }) {
@@ -18,29 +18,21 @@ export default function DecorativeBackground({ count = 4 }) {
 
   useEffect(() => {
     const palette = [
-      "rgba(244,211,94,0.25)",
-      "rgba(232,185,35,0.15)",
-      "rgba(255,255,255,0.18)",
-      "rgba(200,170,80,0.15)",
-      "rgba(255,230,150,0.12)",
-      "rgba(110,72,36,0.70)",
-      "rgba(150,100,50,0.70)",
-      "rgba(180,60,60,0.70)",
-      "rgba(140,50,50,0.70)",
+      "rgba(255, 0, 60, 0.6)",     // neon red-pink
+      "rgba(255, 255, 255, 0.6)",  // soft white glow
+      "rgba(255, 30, 80, 0.6)",    // neon hot red
     ];
 
     setShapes(
       Array.from({ length: count }).map(() => {
-        const size = Math.random() * 65 + 45;
-
         return {
-          w: size,
-          h: Math.random() > 0.5 ? size : size * 0.7,
+          size: Math.random() * 90 + 40,
           top: Math.random() * 80,
           left: Math.random() * 80,
           rot: Math.random() * 360,
-          circle: Math.random() > 0.5,
           color: palette[Math.floor(Math.random() * palette.length)],
+          blur: Math.random() * 6 + 9,
+          opacity: Math.random() * 0.1 + 0.3,
         };
       })
     );
@@ -51,32 +43,34 @@ export default function DecorativeBackground({ count = 4 }) {
       {shapes.map((s, i) => (
         <motion.div
           key={i}
-          initial={{ opacity: 0, scale: 0.8 }}
-          animate={{ opacity: 0.6, scale: 1 }}
-          transition={{ duration: 1.4, ease: "easeOut" }}
-          className="absolute pointer-events-none transition-all duration-500 
-                     group-hover:scale-110 group-hover:rotate-6"
+          className="
+            absolute pointer-events-none
+            transition-all duration-700
+            group-hover:scale-[1.15] group-hover:rotate-12
+          "
           style={{
-            width: s.w,
-            height: s.h,
+            width: s.size,
+            height: s.size * (Math.random() > 0.5 ? 1 : 0.6),
             top: `${s.top}%`,
             left: `${s.left}%`,
-            borderRadius: s.circle ? "9999px" : "12px",
+            borderRadius: "16px",
             background: s.color,
+            opacity: s.opacity,
+            filter: `blur(${s.blur}px)`,
             mixBlendMode: "screen",
             transform: `rotate(${s.rot}deg)`,
           }}
         >
-          {/* Soft floating movement */}
+          {/* subtle float */}
           <motion.div
             className="w-full h-full"
             animate={{
               x: [0, 6, -6, 0],
-              y: [0, -4, 4, 0],
+              y: [0, -6, 6, 0],
             }}
             transition={{
               repeat: Infinity,
-              duration: 18,
+              duration: 8 + Math.random() * 4,
               ease: "easeInOut",
             }}
           />

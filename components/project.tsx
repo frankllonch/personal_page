@@ -60,7 +60,7 @@ export default function Project({
 
         {isNew && (
           <div className="
-            text-[10px] uppercase px-2 py-1
+            text-[10px] uppercase px-3 py-0.6
             bg-green-500/30 border-l border-b border-white/20
             rounded-bl-md text-white
           ">
@@ -70,7 +70,7 @@ export default function Project({
 
         {starred && (
           <div className="
-            text-[10px] uppercase px-2 py-1
+            text-[10px] uppercase px-3 py-0.6
             bg-yellow-500/30 border-l border-b border-white/20
             rounded-bl-md text-white
           ">
@@ -80,7 +80,7 @@ export default function Project({
 
         {isUpcoming && (
           <div className="
-            text-[10px] uppercase px-2 py-1
+            text-[10px] uppercase px-3 py-0.6
             bg-purple-500/30 border-l border-b border-white/20
             rounded-bl-md text-white
           ">
@@ -90,7 +90,7 @@ export default function Project({
 
         {pinned && (
           <div className="
-            text-[10px] uppercase px-2 py-1
+            text-[10px] uppercase px-3 py-0.6
             bg-blue-500/30 border-l border-b border-white/20
             rounded-bl-md text-white
           ">
@@ -103,7 +103,7 @@ export default function Project({
           <div
             key={i}
             className="
-              text-[10px] uppercase px-2 py-1 mt-[1px]
+              text-[10px] uppercase px-3 py-0.6 mt-[1px]
               bg-yellow-400/10
               from-[#F4D35E]/10 to-[#E8B923]/15
               rounded-bl-md text-white

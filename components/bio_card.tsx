@@ -5,10 +5,7 @@ import { motion } from "framer-motion";
 import Image from "next/image";
 import dynamic from "next/dynamic";
 
-const DecorativeBackground = dynamic(
-  () => import("@/components/DecorativeBackground"),
-  { ssr: false }
-);
+
 
 
 const ScrambledText = dynamic(() => import("./wierdtext"), {ssr: false});
@@ -34,18 +31,12 @@ export default function BioCard() {
           className="
             absolute inset-0
             rounded-3xl
-            bg-gradient-to-br from-black via-[#0A0A0A] to-[#1A1A1A]
             shadow-[0_18px_50px_rgba(0,0,0,0.75)]
             overflow-hidden
             border border-white/15
           "
           style={{ backfaceVisibility: "hidden" }}
         >
-          {/* subtle wash */}
-          <div className="
-            absolute inset-0
-            bg-[radial-gradient(circle_at_30%_20%,rgba(255,255,255,0.06),transparent_60%)]
-          " />
 
           {/* TOP BAR */}
           <div className="px-4 pt-3 pb-0 flex items-center justify-between">
@@ -66,12 +57,12 @@ export default function BioCard() {
             <div
               className="
                 relative w-full aspect-[4/3]
-                rounded-3xl overflow-hidden bg-black
+                rounded-3xl overflow-hidden 
                 shadow-[0_12px_45px_rgba(0,0,0,0.9)]
                 border border-white/15
               "
             >
-              <DecorativeBackground count={2} />
+
               <Image
                 fill
                 alt="Frank"
@@ -100,11 +91,6 @@ export default function BioCard() {
             web experiments. Operates best at night.
           </p>
 
-          {/* bottom glow */}
-          <div className="
-            absolute bottom-0 left-0 right-0 h-20
-            bg-[radial-gradient(circle_at_bottom,rgba(244,211,94,0.18),transparent_70%)]
-          " />
         </div>
 
         {/* ====================================================== */}
@@ -113,7 +99,7 @@ export default function BioCard() {
         <div
           className="
             absolute inset-0
-            rounded-3xl bg-black
+            rounded-3xl 
             flex items-center justify-center
             overflow-hidden
             border border-white/15
