@@ -5,7 +5,7 @@ import { ScrambleTextPlugin } from 'gsap/ScrambleTextPlugin';
 
 import './wierdtext.css';
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
+
 
 gsap.registerPlugin(SplitText, ScrambleTextPlugin);
 
@@ -69,6 +69,7 @@ const ScrambledText = ({
   }, [radius, duration, speed, scrambleChars]);
 
   return (
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     <div ref={rootRef} className={`text-block ${className}`} style={style}>
       <p>{children}</p>
     </div>
