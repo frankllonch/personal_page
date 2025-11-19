@@ -193,10 +193,40 @@ export default function Home() {
         <Timeline items={education} />
       </section>
 
-      {/* FOOTER */}
-      <footer className="py-10 text-center text-gray-500 text-sm relative z-10">
-        Frank Llonch © {currentYear}
-      </footer>
+          <footer className="py-10 text-center text-gray-500 text-sm relative z-10">
+      <div className="flex justify-center items-center gap-4 flex-wrap">
+
+        {/* Copyright */}
+        <span className="opacity-80">
+          Frank Llonch © {currentYear}
+        </span>
+
+        <span className="opacity-40">•</span>
+
+        {/* GitHub Repo */}
+        <a
+          href="https://github.com/frankllonch/personal_page"
+          target="_blank"
+          rel="noopener noreferrer"
+          className="hover:text-[#F4D35E] transition-colors duration-300"
+        >
+          Fork this project ↗
+        </a>
+
+        <span className="opacity-40">•</span>
+
+        {/* Inspiration */}
+        <a
+          href="https://gabrielferrate.com"
+          target="_blank"
+          rel="noopener noreferrer"
+          className="hover:text-[#F4D35E] transition-colors duration-300"
+        >
+          Inspired by gabrielferrate.com ↗
+        </a>
+
+      </div>
+    </footer>
     </main>
   );
 }
