@@ -10,6 +10,9 @@ const DecorativeBackground = dynamic(
   { ssr: false }
 );
 
+
+const ScrambledText = dynamic(() => import("./wierdtext"), {ssr: false});
+
 export default function BioCard() {
   const [flipped, setFlipped] = useState(false);
 
@@ -24,9 +27,8 @@ export default function BioCard() {
         transition={{ duration: 0.55, ease: [0.45, 0.15, 0.2, 1] }}
         style={{ transformStyle: "preserve-3d" }}
       >
-
         {/* ====================================================== */}
-        {/* FRONT — MINIMAL Y2K CARD                              */}
+        {/* FRONT OF CARD                                          */}
         {/* ====================================================== */}
         <div
           className="
@@ -45,9 +47,7 @@ export default function BioCard() {
             bg-[radial-gradient(circle_at_30%_20%,rgba(255,255,255,0.06),transparent_60%)]
           " />
 
-          {/* ================================================== */}
-          {/* TOP BAR — LV + HUMAN                               */}
-          {/* ================================================== */}
+          {/* TOP BAR */}
           <div className="px-4 pt-3 pb-0 flex items-center justify-between">
             <span className="text-[11px] uppercase tracking-widest text-gray-400">
               LV. 22
@@ -81,7 +81,7 @@ export default function BioCard() {
             </div>
           </div>
 
-          {/* NAME — pulled up */}
+          {/* NAME */}
           <p
             className="
               px-4 mt-3 text-2xl font-black tracking-tight text-white
@@ -90,7 +90,7 @@ export default function BioCard() {
             Frank Llonch
           </p>
 
-          {/* BIO TEXT BLOCK — pulled up, border removed */}
+          {/* BIO */}
           <p
             className="
               px-4 mt-3 text-[13px] text-gray-400 leading-relaxed
@@ -108,52 +108,44 @@ export default function BioCard() {
         </div>
 
         {/* ====================================================== */}
-        {/* BACK — GIANT “F” THAT ACTUALLY GROWS                  */}
+        {/* BACK OF CARD — SCRAMBLED INTRO TEXT                    */}
         {/* ====================================================== */}
         <div
           className="
             absolute inset-0
-            rounded-3xl
-            bg-black
+            rounded-3xl bg-black
             flex items-center justify-center
-            overflow-visible
+            overflow-hidden
             border border-white/15
+            p-6
           "
           style={{
             backfaceVisibility: "hidden",
             transform: "rotateY(180deg)",
           }}
         >
-
-          {/* GIANT F */}
-          <motion.span
-            initial={{ scale: 1, opacity: 0.9 }}
-            animate={{
-              scale: [1, 1.07, 1],
-              opacity: [0.9, 1, 0.95],
-              x: [0, 1.2, -1.2, 0],
-            }}
-            transition={{
-              duration: 2.8,
-              repeat: Infinity,
-              ease: "easeInOut",
-            }}
-            className="
-              font-inter font-black
-              text-[#F4D35E]
-              drop-shadow-[0_0_60px_rgba(244,211,94,0.45)]
-              leading-none
-              pointer-events-none select-none
-              absolute
-            "
-            style={{
-              fontSize: "5vw",   // larger now
-              lineHeight: 1,
-              transformOrigin: "center",
-            }}
-          >
-            f
-          </motion.span>
+          <div className="w-[100%] text-center select-none">
+            <ScrambledText
+              radius={10}
+              duration={1.2}
+              speed={0.5}
+              scrambleChars=".:"
+              className="
+                text-[#F4D35E]/80
+                font-inter
+                font-medium
+                leading-relaxed
+                text-center
+                drop-shadow-[0_0_25px_rgba(244,211,94,0.25)]
+              "
+              style={{
+                fontSize: "1.4vw", // 1/3 of giant F — perfect
+                lineHeight: "1",
+              }}
+            >
+              Nothing here.
+            </ScrambledText>
+          </div>
         </div>
 
       </motion.div>

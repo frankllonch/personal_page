@@ -15,6 +15,7 @@ import DecorativeBackground from "@/components/DecorativeBackground";
 import Project from "@/components/project";
 import Timeline from "@/components/timeline";
 import BioCard from "@/components/bio_card";
+import ScrambledText from "@/components/wierdtext";
 
 // Data
 import { projects } from "@/lib/projects";
@@ -96,9 +97,18 @@ export default function Home() {
         "
       >
         {/* TITLE */}
-        <div className="font-inter font-black text-3xl sm:text-4xl tracking-tight">
-          frank<span className="text-[#F4D35E]">.</span>
-        </div>
+        <div className="font-inter font-black text-6xl sm:text-7xl tracking-tight">
+          <ScrambledText
+            className="scrambled-text-demo text-8xl sm:text-8xl"
+            radius={30}
+            duration={0.4}
+            speed={0.5}
+            scrambleChars=".:"
+            
+          >
+            frank
+          </ScrambledText>
+        </div> 
 
         {/* SOCIALS */}
         <div
