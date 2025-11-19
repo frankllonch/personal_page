@@ -5,6 +5,8 @@ import { ScrambleTextPlugin } from 'gsap/ScrambleTextPlugin';
 
 import './wierdtext.css';
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+
 gsap.registerPlugin(SplitText, ScrambleTextPlugin);
 
 const ScrambledText = ({
