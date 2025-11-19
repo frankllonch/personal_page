@@ -1,47 +1,63 @@
-import { useEffect, useRef } from 'react';
-import { gsap } from 'gsap';
-import { SplitText } from 'gsap/SplitText';
-import { ScrambleTextPlugin } from 'gsap/ScrambleTextPlugin';
+"use client";
 
-import './wierdtext.css';
+import { useEffect, useRef } from "react";
+import { gsap } from "gsap";
+import { SplitText } from "gsap/SplitText";
+import { ScrambleTextPlugin } from "gsap/ScrambleTextPlugin";
 
+import "./wierdtext.css";
 
-
+// Required plugins
 gsap.registerPlugin(SplitText, ScrambleTextPlugin);
 
-const ScrambledText = ({
+// Define proper TypeScript types
+interface ScrambledTextProps {
+  radius?: number;
+  duration?: number;
+  speed?: number;
+  scrambleChars?: string;
+  className?: string;
+  style?: React.CSSProperties;
+  children?: React.ReactNode; // ⭐ FIX: prevent "children implicitly has an 'any' type"
+}
+
+export default function ScrambledText({
   radius = 100,
   duration = 1.2,
   speed = 0.5,
-  scrambleChars = '.:',
-  className = '',
+  scrambleChars = ".:",
+  className = "",
   style = {},
-  children
-}) => {
-  const rootRef = useRef(null);
-  const charsRef = useRef([]);
+  children,
+}: ScrambledTextProps) {
+  const rootRef = useRef<HTMLDivElement | null>(null);
+  const charsRef = useRef<HTMLElement[]>([]);
 
   useEffect(() => {
     if (!rootRef.current) return;
 
-    const split = SplitText.create(rootRef.current.querySelector('p'), {
-      type: 'chars',
-      charsClass: 'char'
-    });
-    charsRef.current = split.chars;
+    const paragraph = rootRef.current.querySelector("p");
+    if (!paragraph) return;
 
-    charsRef.current.forEach(c => {
+    const split = SplitText.create(paragraph, {
+      type: "chars",
+      charsClass: "char",
+    });
+
+    charsRef.current = split.chars as HTMLElement[];
+
+    charsRef.current.forEach((c) => {
       gsap.set(c, {
-        display: 'inline-block',
-        attr: { 'data-content': c.innerHTML }
+        display: "inline-block",
+        attr: { "data-content": c.innerHTML },
       });
     });
 
-    const handleMove = e => {
-      charsRef.current.forEach(c => {
-        const { left, top, width, height } = c.getBoundingClientRect();
-        const dx = e.clientX - (left + width / 2);
-        const dy = e.clientY - (top + height / 2);
+    const handleMove = (e: PointerEvent) => {
+      charsRef.current.forEach((c) => {
+        const box = c.getBoundingClientRect();
+        const dx = e.clientX - (box.left + box.width / 2);
+        const dy = e.clientY - (box.top + box.height / 2);
         const dist = Math.hypot(dx, dy);
 
         if (dist < radius) {
@@ -49,31 +65,28 @@ const ScrambledText = ({
             overwrite: true,
             duration: duration * (1 - dist / radius),
             scrambleText: {
-              text: c.dataset.content || '',
+              text: c.dataset.content || "",
               chars: scrambleChars,
-              speed
+              speed,
             },
-            ease: 'none'
+            ease: "none",
           });
         }
       });
     };
 
     const el = rootRef.current;
-    el.addEventListener('pointermove', handleMove);
+    el.addEventListener("pointermove", handleMove);
 
     return () => {
-      el.removeEventListener('pointermove', handleMove);
+      el.removeEventListener("pointermove", handleMove);
       split.revert();
     };
   }, [radius, duration, speed, scrambleChars]);
 
   return (
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     <div ref={rootRef} className={`text-block ${className}`} style={style}>
       <p>{children}</p>
     </div>
   );
-};
-
-export default ScrambledText;
+}
