@@ -14,6 +14,16 @@
   display: inline-block;
 }
 
+/* Force chars to inherit font when scrambled */
+.char {
+  font-family: inherit !important;
+  line-height: inherit;
+  letter-spacing: inherit;
+  font-weight: inherit;
+  display: inline-block;
+  white-space: pre;
+}
+
 .text-block p {
     font-size: inherit;   /* <-- allow Tailwind to control size */
     line-height: inherit; /* optional, smoother scaling */

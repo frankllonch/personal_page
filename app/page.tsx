@@ -144,7 +144,7 @@ export default function Home() {
         </h1>
 
         <motion.div
-          className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 auto-rows-[200px]"
+          className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 auto-rows-[200px] "
           variants={containerVariants}
           initial="hidden"
           animate="visible"
@@ -154,7 +154,11 @@ export default function Home() {
             variants={tileVariants}
             className="col-span-1 row-span-2 bg-transparent/60 backdrop-blur border border-white/15 rounded-3xl relative overflow-hidden group p-1"
             onMouseMove={(e) => handle3DTilt(e, (s) => Object.assign(e.currentTarget.style, s))}
-            onMouseLeave={() => reset3DTilt((s) => {})}
+            onMouseLeave={(e) => {
+              e.currentTarget.style.transform =
+                "perspective(1200px) rotateX(0deg) rotateY(0deg) scale(1)";
+              e.currentTarget.style.transition = "transform 200ms ease";
+            }}
           >
             <BioCard />
           </motion.div>
@@ -167,7 +171,11 @@ export default function Home() {
               className="bg-transparent/60 backdrop-blur border border-white/15 rounded-3xl shadow-xl p-4 group cursor-pointer relative overflow-hidden flex"
               onClick={() => window.open(project.link, "_blank")}
               onMouseMove={(e) => handle3DTilt(e, (s) => Object.assign(e.currentTarget.style, s))}
-              onMouseLeave={() => reset3DTilt((s) => {})}
+              onMouseLeave={(e) => {
+                e.currentTarget.style.transform =
+                  "perspective(1200px) rotateX(0deg) rotateY(0deg) scale(1)";
+                e.currentTarget.style.transition = "transform 200ms ease";
+              }}
             >
               <Project {...project} />
             </motion.div>

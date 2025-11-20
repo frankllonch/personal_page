@@ -27,7 +27,7 @@ export interface ProjectData {
       title: "DumbNetflix",
       subtitle:
         "Like Netflix, but dumber. Same movies, zero stress. No ads, no autoplay, no ‘are you still watching?’ judging you.",
-      link: "https://dumbnetflix.vercel.app",
+      link: "https://github.com/frankllonch/netflixpocho",
       color: "bg-red-500",
     },
   
@@ -65,7 +65,7 @@ export interface ProjectData {
       title: "TFG: Marine Sustainability",
       subtitle:
         "Upcoming final degree project: cloud analytics + ecology + AI for marine biodiversity at Ocean Ecostructures. Coming soon.",
-      link: "#",
+      link: "https://oceanecostructures.com/",
       color: "bg-teal-500",
       isUpcoming: true,
     },
