@@ -4,11 +4,7 @@ import React from "react";
 import { motion } from "framer-motion";
 import dynamic from "next/dynamic";
 
-// Hydration-safe DecorativeBackground
-const DecorativeBackground = dynamic(
-  () => import("./DecorativeBackground"),
-  { ssr: false }
-);
+
 
 interface ProjectProps {
   title: string;
@@ -40,7 +36,7 @@ export default function Project({
       transition={{ type: "spring", stiffness: 260, damping: 20 }}
       className="
         w-full h-full
-        bg-[#0A0A0A]
+        bg-transparent
         border border-[#F4D35E]/10
         rounded-xl p-4
         shadow-lg cursor-pointer
@@ -52,8 +48,6 @@ export default function Project({
       "
     >
 
-      {/* background shapes */}
-      <DecorativeBackground count={5} />
 
       {/* STATUS TAGS (your exact style) */}
       <div className="absolute top-0 right-0 flex flex-col items-end z-20">

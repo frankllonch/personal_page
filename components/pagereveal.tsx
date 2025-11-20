@@ -37,7 +37,7 @@ export default function PageReveal() {
                 delay: 0.15 + i * 0.06,
                 ease: [0.25, 1, 0.5, 1],
               }}
-              className="flex-1 bg-black relative overflow-visible"
+              className="flex-1 bg-transparent relative overflow-visible"
             >
               {/* PLACE THE F INSIDE THE MOVING BAR */}
               {isFBar && (

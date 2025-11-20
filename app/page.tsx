@@ -8,8 +8,7 @@ import dynamic from "next/dynamic";
 const FaultyBackground = dynamic(() => import("@/components/FaultyBackground"), { ssr: false });
 const CurvedGrid = dynamic(() => import("@/components/CurveGrid"), { ssr: false });
 
-// Other effects
-import DecorativeBackground from "@/components/DecorativeBackground";
+
 
 // Content
 import Project from "@/components/project";
@@ -84,10 +83,6 @@ export default function Home() {
       {/* BACKGROUND — MUST BE FIRST & FIXED */}
       <FaultyBackground />
 
-      {/* SECOND BACKGROUND LAYER (Curve grid) */}
-      <div className="fixed inset-0 z-[-10] pointer-events-none">
-        <CurvedGrid />
-      </div>
 
       {/* TOP LEFT — SIGNATURE + SOCIALS */}
       <div
@@ -132,7 +127,7 @@ export default function Home() {
               className="
                 h-10 w-10 sm:h-12 sm:w-12
                 flex items-center justify-center
-                bg-black border border-white/20 rounded-xl
+                bg-transparent border border-black/20 rounded-xl
                 shadow-[0_0_15px_rgba(244,211,94,0.15)]
               "
             >
@@ -157,7 +152,7 @@ export default function Home() {
           {/* BIO CARD */}
           <motion.div
             variants={tileVariants}
-            className="col-span-1 row-span-2 bg-black/60 backdrop-blur border border-white/15 rounded-3xl relative overflow-hidden group p-1"
+            className="col-span-1 row-span-2 bg-transparent/60 backdrop-blur border border-white/15 rounded-3xl relative overflow-hidden group p-1"
             onMouseMove={(e) => handle3DTilt(e, (s) => Object.assign(e.currentTarget.style, s))}
             onMouseLeave={() => reset3DTilt((s) => {})}
           >
@@ -169,12 +164,11 @@ export default function Home() {
             <motion.div
               key={project.slug}
               variants={tileVariants}
-              className="bg-black/60 backdrop-blur border border-white/15 rounded-3xl shadow-xl p-4 group cursor-pointer relative overflow-hidden flex"
+              className="bg-transparent/60 backdrop-blur border border-white/15 rounded-3xl shadow-xl p-4 group cursor-pointer relative overflow-hidden flex"
               onClick={() => window.open(project.link, "_blank")}
               onMouseMove={(e) => handle3DTilt(e, (s) => Object.assign(e.currentTarget.style, s))}
               onMouseLeave={() => reset3DTilt((s) => {})}
             >
-              <DecorativeBackground count={4} />
               <Project {...project} />
             </motion.div>
           ))}

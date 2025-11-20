@@ -1,6 +1,5 @@
 import React from "react";
 import Image from "next/image";
-import DecorativeBackground from "./DecorativeBackground";
 
 interface ExperienceCardProps {
   name: string;
@@ -36,8 +35,6 @@ export default function ExperienceCard({
         hover:-translate-y-1 hover:scale-[1.02]
       "
     >
-      {/* decorative shapes */}
-      <DecorativeBackground count={4} />
 
       {/* top row */}
       <div className="flex items-center space-x-2 relative z-20">
