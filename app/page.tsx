@@ -20,7 +20,6 @@ import ScrambledText from "@/components/wierdtext";
 import { projects } from "@/lib/projects";
 import { works, education } from "@/lib/data";
 
-import PageReveal from "@/components/pagereveal";
 import type { Variants } from "framer-motion";
 
 // =============================
@@ -77,8 +76,6 @@ export default function Home() {
 
   return (
     <main className="relative min-h-screen text-white bg-transparent overflow-visible z-10">
-      {/* PAGE REVEAL */}
-      <PageReveal />
 
       {/* BACKGROUND — MUST BE FIRST & FIXED */}
       <FaultyBackground />
