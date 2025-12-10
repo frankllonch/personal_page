@@ -79,4 +79,13 @@ export interface ProjectData {
       color: "bg-teal-500",
    
     },
+    {
+      slug: "Ticketator",
+      title: "Ticketator",
+      subtitle:
+        "A tool to store purchase tickets and receipts from any store in google drive and a server. Using n8n and firestore to automate the process.",
+      link: "https://github.com/frankllonch/ticketator",
+      color: "bg-teal-500",
+   
+    },
   ];
