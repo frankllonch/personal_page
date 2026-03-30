@@ -67,7 +67,7 @@ export default function BioCard() {
                 fill
                 alt="Frank"
                 src="/images/pedro.png"
-                className="object-cover"
+                className="object-cover scale-150"
               />
             </div>
           </div>
