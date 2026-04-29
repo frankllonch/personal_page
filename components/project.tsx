@@ -1,10 +1,7 @@
 "use client";
 
-import React from "react";
+import { memo } from "react";
 import { motion } from "framer-motion";
-import dynamic from "next/dynamic";
-
-
 
 interface ProjectProps {
   title: string;
@@ -17,7 +14,7 @@ interface ProjectProps {
   tags?: string[];
 }
 
-export default function Project({
+const Project = memo(function Project({
   title,
   subtitle,
   link,
@@ -41,7 +38,7 @@ export default function Project({
         rounded-xl p-4
         shadow-lg cursor-pointer
         hover:shadow-xl
-        transition-all duration-300
+        transition-[transform,box-shadow] duration-300
         select-none relative group
         overflow-hidden
         flex flex-col justify-between
@@ -119,4 +116,6 @@ export default function Project({
       </div>
     </motion.div>
   );
-}
+});
+
+export default Project;

@@ -1,6 +1,5 @@
 "use client";
 
-import React from "react";
 import Image from "next/image";
 import { motion } from "framer-motion";
 
@@ -27,13 +26,14 @@ export default function ExperienceCard({
       target="_blank"
       rel="noopener noreferrer"
       className="
-        w-44 h-30
-        bg-[#0A0A0A]
+        w-44 min-h-[7.5rem]
+        bg-black/25 hover:bg-black/75
         rounded-xl p-3 flex flex-col
         shadow-lg
         border border-[#F4D35E]/10
         relative group overflow-hidden
         will-change-transform
+        transition-colors duration-300
       "
       whileHover={{ scale: 1.03 }}
       transition={{ type: "spring", stiffness: 200, damping: 15 }}
@@ -43,7 +43,7 @@ export default function ExperienceCard({
       {/* top row */}
       <div className="flex items-center space-x-2 relative z-20">
         <div className="w-8 h-8 relative rounded-full overflow-hidden flex-none border border-white/20">
-          <Image src={image} alt={name} fill className="object-cover" />
+          <Image src={image} alt={name} fill className="object-cover" sizes="32px" />
         </div>
         <div className="text-xs text-gray-300 uppercase">{name}</div>
       </div>

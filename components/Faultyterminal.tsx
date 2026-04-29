@@ -261,7 +261,26 @@ export default function FaultyTerminal({
   const tintVec = useMemo(() => hexToRgb(tint), [tint]);
   const ditherValue = useMemo(() => (typeof dither === 'boolean' ? (dither ? 1 : 0) : dither), [dither]);
 
-  // 🔥 GLOBAL POINTER-TRACKING (ReactBits-like)
+  // Refs for runtime props — changing these never rebuilds the WebGL context
+  const pauseRef = useRef(pause);
+  const timeScaleRef = useRef(timeScale);
+  const mouseReactRef = useRef(mouseReact);
+  const pageLoadAnimationRef = useRef(pageLoadAnimation);
+
+  useEffect(() => { pauseRef.current = pause; }, [pause]);
+  useEffect(() => { timeScaleRef.current = timeScale; }, [timeScale]);
+  useEffect(() => { mouseReactRef.current = mouseReact; }, [mouseReact]);
+  useEffect(() => { pageLoadAnimationRef.current = pageLoadAnimation; }, [pageLoadAnimation]);
+
+  // Uniform-only updates (no context rebuild)
+  useEffect(() => {
+    if (programRef.current) programRef.current.uniforms.uMouseStrength.value = mouseStrength;
+  }, [mouseStrength]);
+  useEffect(() => {
+    if (programRef.current) programRef.current.uniforms.uBrightness.value = brightness;
+  }, [brightness]);
+
+  // Global pointer tracking
   useEffect(() => {
     if (!mouseReact) return;
 
@@ -331,12 +350,12 @@ export default function FaultyTerminal({
     resizeObserver.observe(ctn);
     resize();
 
-    // Animation loop
+    // Animation loop — reads runtime props from refs, never stale
     const update = (t: number) => {
       rafRef.current = requestAnimationFrame(update);
 
-      if (!pause) {
-        const elapsed = (t * 0.001 + timeOffsetRef.current) * timeScale;
+      if (!pauseRef.current) {
+        const elapsed = (t * 0.001 + timeOffsetRef.current) * timeScaleRef.current;
         program.uniforms.iTime.value = elapsed;
         frozenTimeRef.current = elapsed;
       } else {
@@ -344,16 +363,16 @@ export default function FaultyTerminal({
       }
 
       // Page-load animation
-      if (pageLoadAnimation && loadAnimationStartRef.current === 0)
+      if (pageLoadAnimationRef.current && loadAnimationStartRef.current === 0)
         loadAnimationStartRef.current = t;
 
-      if (pageLoadAnimation && loadAnimationStartRef.current > 0) {
+      if (pageLoadAnimationRef.current && loadAnimationStartRef.current > 0) {
         const progress = Math.min((t - loadAnimationStartRef.current) / 2000, 1);
         program.uniforms.uPageLoadProgress.value = progress;
       }
 
       // Smooth mouse tracking
-      if (mouseReact) {
+      if (mouseReactRef.current) {
         const damping = 0.08;
         smoothMouseRef.current.x += (mouseRef.current.x - smoothMouseRef.current.x) * damping;
         smoothMouseRef.current.y += (mouseRef.current.y - smoothMouseRef.current.y) * damping;
@@ -378,26 +397,8 @@ export default function FaultyTerminal({
       if (gl.canvas.parentElement === ctn) ctn.removeChild(gl.canvas);
       gl.getExtension("WEBGL_lose_context")?.loseContext();
     };
-  }, [
-    scale,
-    gridMul,
-    digitSize,
-    timeScale,
-    pause,
-    scanlineIntensity,
-    glitchAmount,
-    flickerAmount,
-    noiseAmp,
-    chromaticAberration,
-    ditherValue,
-    curvature,
-    tintVec,
-    mouseReact,
-    mouseStrength,
-    pageLoadAnimation,
-    brightness,
-    dpr
-  ]);
+  // Only truly destructive props that require a new GL context
+  }, [scale, gridMul, digitSize, scanlineIntensity, glitchAmount, flickerAmount, noiseAmp, chromaticAberration, ditherValue, curvature, tintVec, dpr]);
 
   return (
     <div

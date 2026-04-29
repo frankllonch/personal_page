@@ -3,12 +3,7 @@
 import React, { useState } from "react";
 import { motion } from "framer-motion";
 import Image from "next/image";
-import dynamic from "next/dynamic";
-
-
-
-
-const ScrambledText = dynamic(() => import("./wierdtext"), {ssr: false});
+import ScrambledText from "./wierdtext";
 
 export default function BioCard() {
   const [flipped, setFlipped] = useState(false);
@@ -67,7 +62,9 @@ export default function BioCard() {
                 fill
                 alt="Frank"
                 src="/images/pedro.png"
-                className="object-cover scale-150"
+                className="object-cover scale-150 object-[center_25%]"
+                sizes="(max-width: 768px) 100vw, 400px"
+                priority
               />
             </div>
           </div>
@@ -125,8 +122,8 @@ export default function BioCard() {
                 drop-shadow-[0_0_25px_rgba(244,211,94,0.25)]
               "
               style={{
-                fontSize: "1.4vw", // 1/3 of giant F — perfect
-                lineHeight: "1",
+                fontSize: "clamp(13px, 1.4vw, 18px)",
+                lineHeight: "1.5",
               }}
             >
               Nothing here.

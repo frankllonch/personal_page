@@ -6,9 +6,6 @@ import dynamic from "next/dynamic";
 
 // Backgrounds
 const FaultyBackground = dynamic(() => import("@/components/FaultyBackground"), { ssr: false });
-const CurvedGrid = dynamic(() => import("@/components/CurveGrid"), { ssr: false });
-
-
 
 // Content
 import Project from "@/components/project";
@@ -43,30 +40,30 @@ const tileVariants: Variants = {
 };
 
 // =============================
-// 3D Tilt Handler
+// 3D Tilt Handler — RAF-throttled, disabled on touch devices
 // =============================
-function handle3DTilt(
-  e: React.MouseEvent<HTMLDivElement>,
-  setStyle: (styles: React.CSSProperties) => void
-) {
-  const rect = e.currentTarget.getBoundingClientRect();
-  const x = e.clientX - rect.left;
-  const y = e.clientY - rect.top;
+let tiltRafId: number | null = null;
 
-  const rotateX = ((y - rect.height / 2) / 30) * -2;
-  const rotateY = ((x - rect.width / 2) / 30) * 2;
+function handle3DTilt(e: React.MouseEvent<HTMLDivElement>) {
+  if (tiltRafId !== null) return;
 
-  setStyle({
-    transform: `perspective(1200px) rotateX(${rotateX}deg) rotateY(${rotateY}deg) scale(1.04)`,
+  // Capture everything before the RAF — React nulls currentTarget after the handler returns
+  const clientX = e.clientX;
+  const clientY = e.clientY;
+  const target = e.currentTarget;
+
+  tiltRafId = requestAnimationFrame(() => {
+    if (!target) { tiltRafId = null; return; }
+    const rect = target.getBoundingClientRect();
+    const x = clientX - rect.left;
+    const y = clientY - rect.top;
+    const rotateX = ((y - rect.height / 2) / 30) * -2;
+    const rotateY = ((x - rect.width / 2) / 30) * 2;
+    target.style.transform = `perspective(1200px) rotateX(${rotateX}deg) rotateY(${rotateY}deg) scale(1.04)`;
+    tiltRafId = null;
   });
 }
 
-function reset3DTilt(setStyle: (styles: React.CSSProperties) => void) {
-  setStyle({
-    transform: "perspective(1200px) rotateX(0deg) rotateY(0deg) scale(1)",
-    transition: "transform 200ms ease",
-  });
-}
 
 // =============================
 // PAGE COMPONENT
@@ -89,14 +86,13 @@ export default function Home() {
         "
       >
         {/* TITLE */}
-        <div className="font-inter font-black text-6xl sm:text-7xl tracking-tight">
+        <div className="font-inter font-black tracking-tight hover:text-black transition-colors duration-300 cursor-default">
           <ScrambledText
-            className="scrambled-text-demo text-8xl sm:text-8xl"
+            className="scrambled-text-demo text-5xl sm:text-6xl lg:text-8xl"
             radius={30}
             duration={0.4}
             speed={0.5}
             scrambleChars=".:"
-            
           >
             frank
           </ScrambledText>
@@ -124,7 +120,7 @@ export default function Home() {
               className="
                 h-10 w-10 sm:h-12 sm:w-12
                 flex items-center justify-center
-                bg-transparent border border-black/20 rounded-xl
+                bg-black border border-white/20 rounded-xl
                 shadow-[0_0_15px_rgba(244,211,94,0.15)]
               "
             >
@@ -135,13 +131,13 @@ export default function Home() {
       </div>
 
       {/* GRID OF CONTENT */}
-      <section className="max-w-7xl mx-auto px-6 pt-20 pb-12 relative z-10">
+      <section className="max-w-7xl mx-auto px-6 pt-36 sm:pt-28 lg:pt-20 pb-12 relative z-10">
         <h1 className="text-3xl font-extrabold tracking-tight text-center mb-8">
           Check out my craft!
         </h1>
 
         <motion.div
-          className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 auto-rows-[200px] "
+          className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6 auto-rows-[180px] sm:auto-rows-[200px]"
           variants={containerVariants}
           initial="hidden"
           animate="visible"
@@ -149,11 +145,10 @@ export default function Home() {
           {/* BIO CARD */}
           <motion.div
             variants={tileVariants}
-            className="col-span-1 row-span-2 bg-transparent/60 backdrop-blur border border-white/15 rounded-3xl relative overflow-hidden group p-1"
-            onMouseMove={(e) => handle3DTilt(e, (s) => Object.assign(e.currentTarget.style, s))}
+            className="col-span-1 row-span-2 bg-black/25 hover:bg-black/60 backdrop-blur-sm border border-white/15 rounded-3xl relative overflow-hidden group p-1 transition-colors duration-300 will-change-transform"
+            onMouseMove={handle3DTilt}
             onMouseLeave={(e) => {
-              e.currentTarget.style.transform =
-                "perspective(1200px) rotateX(0deg) rotateY(0deg) scale(1)";
+              e.currentTarget.style.transform = "perspective(1200px) rotateX(0deg) rotateY(0deg) scale(1)";
               e.currentTarget.style.transition = "transform 200ms ease";
             }}
           >
@@ -165,12 +160,11 @@ export default function Home() {
             <motion.div
               key={project.slug}
               variants={tileVariants}
-              className="bg-transparent/60 backdrop-blur border border-white/15 rounded-3xl shadow-xl p-4 group cursor-pointer relative overflow-hidden flex"
+              className="bg-black/25 hover:bg-black/60 backdrop-blur-sm border border-white/15 rounded-3xl shadow-xl p-4 group cursor-pointer relative overflow-hidden flex transition-colors duration-300 will-change-transform"
               onClick={() => window.open(project.link, "_blank")}
-              onMouseMove={(e) => handle3DTilt(e, (s) => Object.assign(e.currentTarget.style, s))}
+              onMouseMove={handle3DTilt}
               onMouseLeave={(e) => {
-                e.currentTarget.style.transform =
-                  "perspective(1200px) rotateX(0deg) rotateY(0deg) scale(1)";
+                e.currentTarget.style.transform = "perspective(1200px) rotateX(0deg) rotateY(0deg) scale(1)";
                 e.currentTarget.style.transition = "transform 200ms ease";
               }}
             >

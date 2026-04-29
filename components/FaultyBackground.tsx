@@ -6,15 +6,15 @@ const FaultyTerminal = dynamic(() => import("./Faultyterminal"), {
   ssr: false,
 });
 
+// Stable reference — prevents WebGL context from rebuilding on re-renders
+const GRID_MUL: [number, number] = [2, 1];
+
 export default function FaultyBackground() {
   return (
-    <div
-      className="fixed inset-0 z-[-20] pointer-events-none"
-      style={{ width: "100%", height: "100%" }}
-    >
+    <div className="fixed inset-0 z-[-20] pointer-events-none">
       <FaultyTerminal
         scale={5}
-        gridMul={[2, 1]}
+        gridMul={GRID_MUL}
         digitSize={0.3}
         timeScale={1}
         scanlineIntensity={1}
@@ -25,11 +25,11 @@ export default function FaultyBackground() {
         dpr={0.35}
         dither={0}
         curvature={0}
-        tint="#ff0008"
+        tint="#696969"
         mouseReact={true}
         mouseStrength={1}
         pageLoadAnimation={false}
-        brightness={0.5}
+        brightness={1}
       />
     </div>
   );

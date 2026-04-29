@@ -53,7 +53,10 @@ export default function ScrambledText({
       });
     });
 
-    const handleMove = (e: PointerEvent) => {
+    let rafId: number | null = null;
+    let pendingEvent: PointerEvent | null = null;
+
+    const processMove = (e: PointerEvent) => {
       charsRef.current.forEach((c) => {
         const box = c.getBoundingClientRect();
         const dx = e.clientX - (box.left + box.width / 2);
@@ -75,11 +78,23 @@ export default function ScrambledText({
       });
     };
 
+    const handleMove = (e: PointerEvent) => {
+      if (e.pointerType === "touch") return;
+      pendingEvent = e;
+      if (rafId !== null) return;
+      rafId = requestAnimationFrame(() => {
+        if (pendingEvent) processMove(pendingEvent);
+        rafId = null;
+        pendingEvent = null;
+      });
+    };
+
     const el = rootRef.current;
     el.addEventListener("pointermove", handleMove);
 
     return () => {
       el.removeEventListener("pointermove", handleMove);
+      if (rafId !== null) cancelAnimationFrame(rafId);
       split.revert();
     };
   }, [radius, duration, speed, scrambleChars]);
