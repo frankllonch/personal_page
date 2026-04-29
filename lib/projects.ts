@@ -62,7 +62,7 @@ export interface ProjectData {
   
     {
       slug: "ocean-ecostructures-tfg",
-      title: "TFG: Marine Sustainability",
+      title: "Marine Sustainability",
       subtitle:
         "Upcoming final degree project: cloud analytics + ecology + AI for marine biodiversity at Ocean Ecostructures. Coming soon.",
       link: "https://oceanecostructures.com/",
