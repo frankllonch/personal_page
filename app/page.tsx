@@ -88,11 +88,11 @@ export default function Home() {
         {/* TITLE */}
         <div className="font-inter font-black tracking-tight hover:text-black transition-colors duration-300 cursor-default">
           <ScrambledText
-            className="scrambled-text-demo text-5xl sm:text-6xl lg:text-8xl"
+            className="scrambled-text-demo text-5xl sm:text-6xl lg:text-5xl"
             radius={30}
             duration={0.4}
             speed={0.5}
-            scrambleChars=".:"
+            scrambleChars="*"
           >
             frank
           </ScrambledText>
@@ -132,9 +132,17 @@ export default function Home() {
 
       {/* GRID OF CONTENT */}
       <section className="max-w-7xl mx-auto px-6 pt-36 sm:pt-28 lg:pt-20 pb-12 relative z-10">
-        <h1 className="text-3xl font-extrabold tracking-tight text-center mb-8">
-          Check out my craft!
-        </h1>
+        <div className="flex justify-center mb-8">
+          <ScrambledText
+            radius={30}
+            duration={0.8}
+            speed={0.5}
+            scrambleChars="fl"
+            className="text-6xl font-extrabold tracking-tight text-center"
+          >
+            Check out my craft!
+          </ScrambledText>
+        </div>
 
         <motion.div
           className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6 auto-rows-[180px] sm:auto-rows-[200px]"
@@ -176,13 +184,33 @@ export default function Home() {
 
       {/* WORK EXPERIENCE */}
       <section className="py-10 max-w-7xl mx-auto px-6 relative z-10">
-        <h1 className="text-3xl font-extrabold text-center mb-6">Work Experience</h1>
+        <div className="flex justify-center mb-6">
+          <ScrambledText
+            radius={30}
+            duration={0.8}
+            speed={0.5}
+            scrambleChars="*"
+            className="text-6xl font-extrabold text-center"
+          >
+            Work Experience
+          </ScrambledText>
+        </div>
         <Timeline items={works} />
       </section>
 
       {/* EDUCATION */}
       <section className="py-10 max-w-7xl mx-auto px-6 relative z-10">
-        <h1 className="text-3xl font-extrabold text-center mb-6">Education</h1>
+        <div className="flex justify-center mb-6">
+          <ScrambledText
+            radius={30}
+            duration={0.8}
+            speed={0.5}
+            scrambleChars="*"
+            className="text-6xl font-extrabold text-center"
+          >
+            Education
+          </ScrambledText>
+        </div>
         <Timeline items={education} />
       </section>
 

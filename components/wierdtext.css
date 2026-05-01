@@ -5,7 +5,6 @@
   margin: 0.2vw;
   max-width: 800px;
   font-family: monospace;
-  font-size: clamp(14px, 4vw, 32px);
   color: #fff;
 }
 
