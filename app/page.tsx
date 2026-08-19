@@ -78,17 +78,28 @@ export default function Home() {
       <FaultyBackground />
 
 
-      {/* TOP LEFT — SIGNATURE + SOCIALS */}
-      <div
+      {/* TOP BAR — SIGNATURE + SOCIALS
+          Full-width fixed header. The inner container mirrors the content grid's
+          `max-w-7xl mx-auto px-6` so the socials sit in the gutter alignment of the
+          cards instead of floating over their first column on narrow viewports. */}
+      <header
         className="
-          fixed top-4 left-4 z-[200]
-          flex flex-col gap-3
+          fixed top-0 inset-x-0 z-[200]
+          bg-black/40 backdrop-blur-md
+          border-b border-white/10
         "
       >
+        <div
+          className="
+            max-w-7xl mx-auto px-6
+            h-16 sm:h-20
+            flex flex-row items-center justify-between gap-4
+          "
+        >
         {/* TITLE */}
-        <div className="font-inter font-black tracking-tight hover:text-black transition-colors duration-300 cursor-default">
+        <div className="font-inter font-black tracking-tight hover:text-black transition-colors duration-300 cursor-default shrink-0">
           <ScrambledText
-            className="scrambled-text-demo text-5xl sm:text-6xl lg:text-5xl"
+            className="scrambled-text-demo text-3xl sm:text-4xl"
             radius={30}
             duration={0.4}
             speed={0.5}
@@ -96,14 +107,13 @@ export default function Home() {
           >
             frank
           </ScrambledText>
-        </div> 
+        </div>
 
         {/* SOCIALS */}
         <div
           className="
-            flex flex-row gap-3
-            sm:flex-col sm:gap-4
-            mt-1
+            flex flex-row items-center
+            gap-2 sm:gap-3
           "
         >
           {[
@@ -118,13 +128,13 @@ export default function Home() {
               whileHover={{ scale: 1.08, y: -2 }}
               transition={{ type: "spring", stiffness: 240, damping: 16 }}
               className="
-                h-10 w-10 sm:h-12 sm:w-12
+                h-9 w-9 sm:h-10 sm:w-10 shrink-0
                 flex items-center justify-center
                 bg-black border border-white/20 rounded-xl
                 shadow-[0_0_15px_rgba(244,211,94,0.15)]
               "
             >
-              <Image src={s.img} alt={s.alt} width={24} height={24} />
+              <Image src={s.img} alt={s.alt} width={20} height={20} />
             </motion.a>
           ))}
 
@@ -138,7 +148,7 @@ export default function Home() {
             aria-label="Curriculum Vitae (PDF)"
             className="
               group
-              h-10 w-10 sm:h-12 sm:w-12
+              h-9 w-9 sm:h-10 sm:w-10 shrink-0
               flex items-center justify-center
               bg-black border border-white/20 rounded-xl
               shadow-[0_0_15px_rgba(244,211,94,0.15)]
@@ -152,10 +162,11 @@ export default function Home() {
             </div>
           </motion.a>
         </div>
-      </div>
+        </div>
+      </header>
 
       {/* GRID OF CONTENT */}
-      <section className="max-w-7xl mx-auto px-6 pt-36 sm:pt-28 lg:pt-20 pb-12 relative z-10">
+      <section className="max-w-7xl mx-auto px-6 pt-28 sm:pt-32 pb-12 relative z-10">
         <div className="flex justify-center mb-8">
           <ScrambledText
             radius={30}
