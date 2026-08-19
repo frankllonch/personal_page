@@ -101,8 +101,7 @@ export interface ProjectData {
       subtitle:
         "The site you're on right now. Next.js, Framer Motion and a WebGL background that eats GPUs for breakfast. Very meta.",
       link: "https://github.com/frankllonch/personal_page",
-      color: "bg-[#F4D35E]",
+      color: "bg-yellow-500",
       isNew: true,
-    }
-
+    },
   ];

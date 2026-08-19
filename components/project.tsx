@@ -14,21 +14,19 @@ interface ProjectProps {
   tags?: string[];
 }
 
+// Presentational only — the wrapping tile in app/page.tsx owns the click, so the
+// whole tile (including its padding) is clickable and one click opens one tab.
 const Project = memo(function Project({
   title,
   subtitle,
-  link,
   starred,
   isNew,
   isUpcoming,
   pinned,
   tags = [],
 }: ProjectProps) {
-  const handleClick = () => window.open(link, "_blank");
-
   return (
     <motion.div
-      onClick={handleClick}
       whileHover={{ y: -4, scale: 1.02 }}
       transition={{ type: "spring", stiffness: 260, damping: 20 }}
       className="
