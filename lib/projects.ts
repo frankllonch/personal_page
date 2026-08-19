@@ -19,7 +19,6 @@ export interface ProjectData {
         "Daily stock forecasting for Spain’s two banking gladiators. LSTMs, GRUs, pipelines, and way too many CSVs.",
       link: "https://bbvavssantander.streamlit.app",
       color: "bg-blue-500",
-      isNew: true,
     },
   
     {
@@ -38,7 +37,6 @@ export interface ProjectData {
         "Streamlit app that classifies skin lesions. Useful, scary, and surprisingly accurate. Works best if you don’t panic.",
       link: "https://melanomapp.streamlit.app",
       color: "bg-green-500",
-      isNew: true,
     },
   
     {
@@ -57,7 +55,6 @@ export interface ProjectData {
         "A Retrieval-Augmented Generation chatbot about World War II. Nerdy, overkill, and actually pretty cool.",
       link: "https://github.com/frankllonch/ww2_RAG",
       color: "bg-yellow-500",
-      isNew: true,
     },
   
     {
@@ -86,6 +83,26 @@ export interface ProjectData {
         "A tool to store purchase tickets and receipts from any store in google drive and a server. Using n8n and firestore to automate the process.",
       link: "https://github.com/frankllonch/ticketator",
       color: "bg-teal-500",
-   
     },
+
+    {
+      slug: "tables-parser",
+      title: "Tables Parser",
+      subtitle:
+        "Drop in a messy PDF, get clean tables out. Python extractor on the back, TypeScript UI on the front. Spreadsheets, finally tamed.",
+      link: "https://github.com/frankllonch/tables-parser-app-frontend",
+      color: "bg-orange-500",
+      isNew: true,
+    },
+
+    {
+      slug: "personal-page",
+      title: "This Very Page",
+      subtitle:
+        "The site you're on right now. Next.js, Framer Motion and a WebGL background that eats GPUs for breakfast. Very meta.",
+      link: "https://github.com/frankllonch/personal_page",
+      color: "bg-[#F4D35E]",
+      isNew: true,
+    }
+
   ];

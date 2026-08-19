@@ -108,7 +108,7 @@ export default function Home() {
         >
           {[
             { href: "https://github.com/frankllonch", img: "/images/github-logo.png", alt: "GitHub" },
-            { href: "https://linkedin.com/in/YOUR-LINK", img: "/images/linkedin_logo_sq.png", alt: "LinkedIn" },
+            { href: "https://linkedin.com/in/frankllonch", img: "/images/linkedin_logo_sq.png", alt: "LinkedIn" },
             { href: "mailto:llonchfrank@gmail.com", img: "/images/email.png", alt: "Email" },
           ].map((s, i) => (
             <motion.a
@@ -127,6 +127,30 @@ export default function Home() {
               <Image src={s.img} alt={s.alt} width={24} height={24} />
             </motion.a>
           ))}
+
+          {/* CV */}
+          <motion.a
+            href="/cv.pdf"
+            target="_blank"
+            rel="noopener noreferrer"
+            whileHover={{ scale: 1.08, y: -2 }}
+            transition={{ type: "spring", stiffness: 240, damping: 16 }}
+            aria-label="Curriculum Vitae (PDF)"
+            className="
+              group
+              h-10 w-10 sm:h-12 sm:w-12
+              flex items-center justify-center
+              bg-black border border-white/20 rounded-xl
+              shadow-[0_0_15px_rgba(244,211,94,0.15)]
+              hover:bg-white transition-colors duration-300
+            "
+          >
+            {/* a plain div: globals.css has unlayered `a`/`span` colour rules that
+                outrank Tailwind's layered utilities, so neither works here */}
+            <div className="text-white group-hover:text-black font-bold text-xs sm:text-sm tracking-wide transition-colors duration-300">
+              CV
+            </div>
+          </motion.a>
         </div>
       </div>
 
