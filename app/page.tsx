@@ -1,6 +1,7 @@
 "use client";
 
-import { motion } from "framer-motion";
+import { motion, useScroll, useMotionValueEvent } from "framer-motion";
+import { useState } from "react";
 import Image from "next/image";
 import dynamic from "next/dynamic";
 
@@ -71,6 +72,20 @@ function handle3DTilt(e: React.MouseEvent<HTMLDivElement>) {
 export default function Home() {
   const currentYear = new Date().getFullYear();
 
+  // Hide the top bar while scrolling down, bring it back on scroll up.
+  // REVEAL_AT is a small dead zone so a jittery trackpad can't flicker the bar.
+  const [barHidden, setBarHidden] = useState(false);
+  const { scrollY } = useScroll();
+
+  useMotionValueEvent(scrollY, "change", (latest) => {
+    const previous = scrollY.getPrevious() ?? 0;
+    const delta = latest - previous;
+    if (Math.abs(delta) < 4) return;
+
+    if (delta > 0 && latest > 100) setBarHidden(true);
+    else if (delta < 0) setBarHidden(false);
+  });
+
   return (
     <main className="relative min-h-screen text-white bg-transparent overflow-visible z-10">
 
@@ -82,24 +97,28 @@ export default function Home() {
           Full-width fixed header. The inner container mirrors the content grid's
           `max-w-7xl mx-auto px-6` so the socials sit in the gutter alignment of the
           cards instead of floating over their first column on narrow viewports. */}
-      <header
+      <motion.header
+        animate={{ y: barHidden ? "-100%" : "0%" }}
+        initial={false}
+        transition={{ duration: 0.35, ease: [0.25, 0.1, 0.25, 1] }}
         className="
           fixed top-0 inset-x-0 z-[200]
           bg-black/40 backdrop-blur-md
           border-b border-white/10
+          will-change-transform
         "
       >
         <div
           className="
             max-w-7xl mx-auto px-6
-            h-16 sm:h-20
+            h-12 sm:h-14
             flex flex-row items-center justify-between gap-4
           "
         >
         {/* TITLE */}
         <div className="font-inter font-black tracking-tight hover:text-black transition-colors duration-300 cursor-default shrink-0">
           <ScrambledText
-            className="scrambled-text-demo text-3xl sm:text-4xl"
+            className="scrambled-text-demo text-2xl sm:text-3xl"
             radius={30}
             duration={0.4}
             speed={0.5}
@@ -128,13 +147,13 @@ export default function Home() {
               whileHover={{ scale: 1.08, y: -2 }}
               transition={{ type: "spring", stiffness: 240, damping: 16 }}
               className="
-                h-9 w-9 sm:h-10 sm:w-10 shrink-0
+                h-8 w-8 sm:h-9 sm:w-9 shrink-0
                 flex items-center justify-center
                 bg-black border border-white/20 rounded-xl
                 shadow-[0_0_15px_rgba(244,211,94,0.15)]
               "
             >
-              <Image src={s.img} alt={s.alt} width={20} height={20} />
+              <Image src={s.img} alt={s.alt} width={18} height={18} />
             </motion.a>
           ))}
 
@@ -148,7 +167,7 @@ export default function Home() {
             aria-label="Curriculum Vitae (PDF)"
             className="
               group
-              h-9 w-9 sm:h-10 sm:w-10 shrink-0
+              h-8 w-8 sm:h-9 sm:w-9 shrink-0
               flex items-center justify-center
               bg-black border border-white/20 rounded-xl
               shadow-[0_0_15px_rgba(244,211,94,0.15)]
@@ -163,10 +182,10 @@ export default function Home() {
           </motion.a>
         </div>
         </div>
-      </header>
+      </motion.header>
 
       {/* GRID OF CONTENT */}
-      <section className="max-w-7xl mx-auto px-6 pt-28 sm:pt-32 pb-12 relative z-10">
+      <section className="max-w-7xl mx-auto px-6 pt-24 sm:pt-28 pb-12 relative z-10">
         <div className="flex justify-center mb-8">
           <ScrambledText
             radius={30}
