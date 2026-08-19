@@ -29,12 +29,13 @@ export default function BioCard() {
             shadow-[0_18px_50px_rgba(0,0,0,0.75)]
             overflow-hidden
             border border-white/15
+            flex flex-col
           "
           style={{ backfaceVisibility: "hidden" }}
         >
 
           {/* TOP BAR */}
-          <div className="px-4 pt-3 pb-0 flex items-center justify-between">
+          <div className="shrink-0 px-4 pt-3 pb-0 flex items-center justify-between">
             <span className="text-[11px] uppercase tracking-widest text-gray-400">
               LV. 22
             </span>
@@ -47,12 +48,13 @@ export default function BioCard() {
             </span>
           </div>
 
-          {/* PORTRAIT */}
-          <div className="px-4 pt-2">
+          {/* PORTRAIT — flex-1 + min-h-0 so it absorbs the leftover height instead
+              of an aspect ratio driving it past the card and clipping the bio */}
+          <div className="px-4 pt-2 flex-1 min-h-0">
             <div
               className="
-                relative w-full aspect-[4/3]
-                rounded-3xl overflow-hidden 
+                relative w-full h-full
+                rounded-3xl overflow-hidden
                 shadow-[0_12px_45px_rgba(0,0,0,0.9)]
                 border border-white/15
               "
@@ -72,7 +74,7 @@ export default function BioCard() {
           {/* NAME */}
           <p
             className="
-              px-4 mt-3 text-2xl font-black tracking-tight text-white
+              shrink-0 px-4 mt-3 text-2xl font-black tracking-tight text-white
             "
           >
             Frank Llonch
@@ -81,7 +83,7 @@ export default function BioCard() {
           {/* BIO */}
           <p
             className="
-              px-4 mt-3 text-[13px] text-gray-400 leading-relaxed
+              shrink-0 px-4 mt-2 pb-4 text-[13px] text-gray-400 leading-relaxed
             "
           >
             Engineer navigating data, systems, AI automation and chaotic
