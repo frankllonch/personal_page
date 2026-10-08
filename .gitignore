@@ -39,3 +39,8 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+# Raw 4K animation exports (15MB). The shipped loader frames in public/loader
+# are generated from these by `npm run build:loader` and ARE committed.
+# Delete this line if you'd rather version the originals too.
+/assets-src/
