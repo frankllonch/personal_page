@@ -208,7 +208,10 @@ export default function Loader() {
       c.style.setProperty("transform", "translate3d(-100vw,-50%,0)");
       ctxRef.current = c.getContext("2d");
     }
-    coverRef.current?.style.setProperty("transform", "translate3d(-100vw,0,0)");
+    // Parked at 0, not off to the left: the panel only has to cover the
+    // viewport before the drive starts, and shifting it left by a screen width
+    // exposed the right-hand side — the tail of the wordmark flashed there.
+    coverRef.current?.style.setProperty("transform", "translate3d(0,0,0)");
   }, []);
 
   // Lock scrolling while the overlay is up.
@@ -253,15 +256,18 @@ export default function Loader() {
     userSelect: "none",
   };
 
-  // Same x as the car, so its left edge is the car's rear bumper. 150vw is the
-  // smallest width that still covers the viewport when the car is parked off
-  // the left edge — a wider panel is just more area for the compositor.
+  // Same x as the car, so its left edge is the car's rear bumper.
+  // The panel's left edge sits at the car's x, which bottoms out at -carW, so
+  // it has to be 100vw + carW wide to still reach the right edge then. carW is
+  // clamp(230px, 34vw, 560px), hence the absolute term: expressing this in vw
+  // underflows on narrow screens, where the 230px floor is a large fraction of
+  // the viewport (61vw at 375px).
   const cover: CSSProperties = {
     position: "absolute",
     top: 0,
     left: 0,
     height: "100%",
-    width: "150vw",
+    width: "calc(100vw + 600px)",
     background: "#ffffff",
     willChange: "transform",
   };
