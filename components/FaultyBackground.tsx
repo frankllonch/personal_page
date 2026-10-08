@@ -1,7 +1,6 @@
 "use client";
 
 import dynamic from "next/dynamic";
-import { useEffect, useState } from "react";
 
 const FaultyTerminal = dynamic(() => import("./Faultyterminal"), {
   ssr: false,
@@ -11,17 +10,11 @@ const FaultyTerminal = dynamic(() => import("./Faultyterminal"), {
 const GRID_MUL: [number, number] = [2, 1];
 
 export default function FaultyBackground() {
-  // Mounts after the intro loader leaves, so ease it in rather than popping.
-  const [shown, setShown] = useState(false);
-  useEffect(() => {
-    const r = requestAnimationFrame(() => setShown(true));
-    return () => cancelAnimationFrame(r);
-  }, []);
-
   return (
     <div
-      className="fixed inset-0 z-[-20] pointer-events-none"
-      style={{ opacity: shown ? 1 : 0, transition: "opacity 700ms ease" }}
+      // intro-bg-fade: mounts as the intro curtain starts lifting, so it has
+      // the whole exit plus a long tail to come up.
+      className="intro-bg-fade fixed inset-0 z-[-20] pointer-events-none"
     >
       <FaultyTerminal
         scale={5}

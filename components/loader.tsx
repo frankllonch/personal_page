@@ -94,11 +94,13 @@ export default function Loader() {
       if (doneRef.current) return;
       doneRef.current = true;
       setLeaving(true);
+      // Release the background as the curtain starts lifting, not after it has
+      // gone: it gets the whole exit to fade up behind the panel instead of
+      // appearing against an already-visible page.
+      markIntroDone();
       window.setTimeout(() => {
         if (cancelled) return;
         setMounted(false);
-        // Only now let the page start its WebGL background.
-        markIntroDone();
       }, EXIT_MS);
     };
 
@@ -238,7 +240,10 @@ export default function Loader() {
     transform: leaving ? "translate3d(0,-100%,0)" : "translate3d(0,0,0)",
     transition: `transform ${EXIT_MS}ms cubic-bezier(0.76, 0, 0.24, 1)`,
     willChange: "transform",
-  };
+    // Safari artefacts when a promoted layer is moved by a transform.
+    backfaceVisibility: "hidden",
+    WebkitBackfaceVisibility: "hidden",
+  } as CSSProperties;
 
   const word: CSSProperties = {
     position: "absolute",
@@ -269,7 +274,7 @@ export default function Loader() {
     height: "100%",
     width: "calc(100vw + 600px)",
     background: "#ffffff",
-    willChange: "transform",
+    willChange: driving ? "transform" : "auto",
   };
 
   const car: CSSProperties = {
@@ -279,7 +284,7 @@ export default function Loader() {
     display: "block",
     width: "clamp(230px, 34vw, 560px)",
     height: "auto",
-    willChange: "transform",
+    willChange: driving ? "transform" : "auto",
     opacity: driving ? 1 : 0,
   };
 
@@ -287,15 +292,20 @@ export default function Loader() {
     <div id="intro-loader" style={shell} aria-hidden="true">
       <div data-loader="word" style={word}>frank</div>
 
-      <div ref={coverRef} data-loader="cover" style={cover} />
+      {/* Both have left the viewport by the time the curtain lifts, so stop
+          rendering them: dragging two promoted layers through the exit
+          transform is what distorted the panel in Safari. */}
+      {!leaving && <div ref={coverRef} data-loader="cover" style={cover} />}
 
-      <canvas
-        ref={canvasRef}
-        data-loader="car"
-        width={SPRITE_W}
-        height={SPRITE_H}
-        style={car}
-      />
+      {!leaving && (
+        <canvas
+          ref={canvasRef}
+          data-loader="car"
+          width={SPRITE_W}
+          height={SPRITE_H}
+          style={car}
+        />
+      )}
 
       {/* Real asset progress, in the spirit of the reference site's counter. */}
       <div

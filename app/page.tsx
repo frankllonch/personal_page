@@ -119,6 +119,14 @@ export default function Home() {
   });
 
   useEffect(() => {
+    // Warm the background's chunks while the intro plays. Fetching and parsing
+    // them is cheap; it's creating the WebGL context and compiling the shader
+    // that costs, and that still waits for the intro to finish. Without this
+    // the two chained dynamic imports only start once the curtain is already
+    // lifting, so the background showed up a few hundred ms late.
+    void import("@/components/FaultyBackground");
+    void import("@/components/Faultyterminal");
+
     if (isIntroDone()) {
       setBackgroundReady(true);
       return;
