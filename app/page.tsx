@@ -1,7 +1,7 @@
 "use client";
 
 import { motion, useScroll, useMotionValueEvent } from "framer-motion";
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import Image from "next/image";
 import dynamic from "next/dynamic";
 
@@ -17,6 +17,7 @@ import ScrambledText from "@/components/wierdtext";
 // Data
 import { projects } from "@/lib/projects";
 import { works, education } from "@/lib/data";
+import { isIntroDone, onIntroDone } from "@/lib/intro";
 
 import type { Variants } from "framer-motion";
 
@@ -80,6 +81,8 @@ const TILE_SPRING = { type: "spring", stiffness: 240, damping: 16 } as const;
 const BAR_ALWAYS_VISIBLE_ABOVE = 100;
 // Ignore scroll deltas smaller than this so trackpad jitter can't flicker the bar.
 const BAR_SCROLL_JITTER = 4;
+// Upper bound on how long the background waits for the intro to finish.
+const SAFETY_BACKGROUND_MS = 9000;
 
 // =============================
 // PAGE COMPONENT
@@ -89,6 +92,7 @@ export default function Home() {
 
   // Hide the top bar while scrolling down, bring it back on scroll up.
   const [barHidden, setBarHidden] = useState(false);
+  const [backgroundReady, setBackgroundReady] = useState(false);
   const { scrollY } = useScroll();
   const hadFirstScrollEvent = useRef(false);
 
@@ -114,11 +118,28 @@ export default function Home() {
     setBarHidden(delta > 0);
   });
 
+  useEffect(() => {
+    if (isIntroDone()) {
+      setBackgroundReady(true);
+      return;
+    }
+    const off = onIntroDone(() => setBackgroundReady(true));
+    // Belt and braces: if the intro never reports in, still show the background.
+    const t = window.setTimeout(() => setBackgroundReady(true), SAFETY_BACKGROUND_MS);
+    return () => {
+      off();
+      window.clearTimeout(t);
+    };
+  }, []);
+
   return (
     <main className="relative min-h-screen text-white bg-transparent overflow-visible z-10">
 
-      {/* BACKGROUND — MUST BE FIRST & FIXED */}
-      <FaultyBackground />
+      {/* BACKGROUND — MUST BE FIRST & FIXED.
+          Held back until the intro loader is gone: compiling and running a
+          full-screen WebGL shader while the loader animates made the intro
+          stutter badly on Safari. It fades itself in on mount. */}
+      {backgroundReady && <FaultyBackground />}
 
 
       {/* TOP BAR — SIGNATURE + SOCIALS

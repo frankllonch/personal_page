@@ -1,34 +1,42 @@
 "use client";
 
 import { useEffect, useRef, useState, type CSSProperties } from "react";
+import { markIntroDone } from "@/lib/intro";
 
 /**
- * Intro loader: the car drives in from the left and uncovers "FRANK" as it goes.
+ * Intro loader: the car drives in, waves, and uncovers "frank" as it leaves.
  *
- * How the reveal works: the car and a black cover panel share the SAME x value
+ * How the reveal works: the car and a white cover panel share the SAME x value
  * every frame. The cover starts over the wordmark and its left edge rides the
  * car's rear bumper, so letters emerge exactly as the car clears them. Sharing
  * one number means the two can never drift apart.
  *
- * Frames come from public/loader (built by scripts-build-loader.mjs). The car
+ * Frames come from public/loader (built by scripts/build-loader.mjs). The car
  * body is rigid across the source frames, so CSS owns the motion at 60fps and
  * the sprites only carry the driver's animation — that is why 10 frames is
  * enough where the raw export had 48.
+ *
+ * The sprites are painted into a single <canvas>. Stacking ten 900x733 <img>
+ * elements and cross-fading them meant the compositor juggled ~26MB of decoded
+ * bitmaps every frame, which Safari handled badly.
  */
 
 const FRAME_COUNT = 10;
 const CRUISE_FRAMES = 3; // indices 0-2: hands on the wheel
 const WAVE_START = 3; // indices 3-9: the driver raises an arm
 
-// The gesture runs early and is over well before the car reaches the middle.
+// The gesture runs early and is over before the car reaches the middle.
 // The source art only ever raises the arm, so the lower half of the wave is the
 // same frames played back in reverse — a wave looks the same going down.
 // Tuned against the geometry: the car is only fully on screen for p in
-// [0.254, 0.746], so the wave runs from the moment it clears the left edge
-// (p=0.27) until it reaches dead centre (p=0.50).
+// [0.254, 0.746], so the wave spans p=0.27 (just clear of the left edge) to
+// p=0.50 (dead centre).
 const GESTURE_START = 0.22;
 const GESTURE_END = 0.62;
 const CRUISE_MS = 150; // hand-drawn boil while just driving
+
+const SPRITE_W = 900;
+const SPRITE_H = 733;
 
 const DRIVE_MS = 1750;
 const HOLD_MS = 320;
@@ -68,9 +76,10 @@ export default function Loader() {
   const [pct, setPct] = useState(0);
   const [driving, setDriving] = useState(false);
 
-  const carRef = useRef<HTMLDivElement>(null);
+  const canvasRef = useRef<HTMLCanvasElement>(null);
   const coverRef = useRef<HTMLDivElement>(null);
-  const imgsRef = useRef<Array<HTMLImageElement | null>>([]);
+  const framesRef = useRef<HTMLImageElement[]>([]);
+  const ctxRef = useRef<CanvasRenderingContext2D | null>(null);
   const lastFrameRef = useRef(-1);
   const rafRef = useRef<number | null>(null);
   const doneRef = useRef(false);
@@ -85,11 +94,24 @@ export default function Loader() {
       if (doneRef.current) return;
       doneRef.current = true;
       setLeaving(true);
-      window.setTimeout(() => !cancelled && setMounted(false), EXIT_MS);
+      window.setTimeout(() => {
+        if (cancelled) return;
+        setMounted(false);
+        // Only now let the page start its WebGL background.
+        markIntroDone();
+      }, EXIT_MS);
     };
 
     // Hard stop: if anything stalls, the site must still become reachable.
     const safety = window.setTimeout(finish, SAFETY_MS);
+
+    const paint = (idx: number) => {
+      const ctx = ctxRef.current;
+      const img = framesRef.current[idx];
+      if (!ctx || !img) return;
+      ctx.clearRect(0, 0, SPRITE_W, SPRITE_H);
+      ctx.drawImage(img, 0, 0, SPRITE_W, SPRITE_H);
+    };
 
     const drive = () => {
       if (cancelled || doneRef.current) return;
@@ -101,6 +123,8 @@ export default function Loader() {
       }
 
       setDriving(true);
+      paint(0);
+      lastFrameRef.current = 0;
       const start = performance.now();
 
       const tick = (now: number) => {
@@ -109,11 +133,11 @@ export default function Loader() {
         const p = easeDrive(raw);
 
         const vw = window.innerWidth;
-        const carW = carRef.current?.offsetWidth ?? vw * 0.34;
+        const carW = canvasRef.current?.offsetWidth ?? vw * 0.34;
         // Rear bumper travels from just off-screen left to just off-screen right.
         const x = -carW + p * (vw + carW);
 
-        if (carRef.current) carRef.current.style.transform = `translate3d(${x}px,-50%,0)`;
+        if (canvasRef.current) canvasRef.current.style.transform = `translate3d(${x}px,-50%,0)`;
         if (coverRef.current) coverRef.current.style.transform = `translate3d(${x}px,0,0)`;
 
         let idx: number;
@@ -127,8 +151,7 @@ export default function Loader() {
           idx = Math.floor((now - start) / CRUISE_MS) % CRUISE_FRAMES;
         }
         if (idx !== lastFrameRef.current) {
-          imgsRef.current[lastFrameRef.current]?.style.setProperty("opacity", "0");
-          imgsRef.current[idx]?.style.setProperty("opacity", "1");
+          paint(idx);
           lastFrameRef.current = idx;
         }
 
@@ -153,6 +176,7 @@ export default function Loader() {
       const imgs = Array.from({ length: FRAME_COUNT }, (_, i) => {
         const img = new Image();
         img.src = frameSrc(i);
+        framesRef.current[i] = img;
         return img
           .decode()
           .catch(() => undefined)
@@ -179,7 +203,11 @@ export default function Loader() {
   // two transforms are never React-controlled, so the re-render that starts the
   // exit cannot reset them mid-flight.
   useEffect(() => {
-    carRef.current?.style.setProperty("transform", "translate3d(-100vw,-50%,0)");
+    const c = canvasRef.current;
+    if (c) {
+      c.style.setProperty("transform", "translate3d(-100vw,-50%,0)");
+      ctxRef.current = c.getContext("2d");
+    }
     coverRef.current?.style.setProperty("transform", "translate3d(-100vw,0,0)");
   }, []);
 
@@ -192,6 +220,9 @@ export default function Loader() {
       document.body.style.overflow = prev;
     };
   }, [mounted]);
+
+  // If the component is ever torn down without finishing, don't strand the page.
+  useEffect(() => () => markIntroDone(), []);
 
   if (!mounted) return null;
 
@@ -222,13 +253,15 @@ export default function Loader() {
     userSelect: "none",
   };
 
-  // Same x as the car, so its left edge is the car's rear bumper.
+  // Same x as the car, so its left edge is the car's rear bumper. 150vw is the
+  // smallest width that still covers the viewport when the car is parked off
+  // the left edge — a wider panel is just more area for the compositor.
   const cover: CSSProperties = {
     position: "absolute",
-    top: "-10%",
+    top: 0,
     left: 0,
-    height: "120%",
-    width: "220vw",
+    height: "100%",
+    width: "150vw",
     background: "#ffffff",
     willChange: "transform",
   };
@@ -237,8 +270,9 @@ export default function Loader() {
     position: "absolute",
     top: "54%",
     left: 0,
+    display: "block",
     width: "clamp(230px, 34vw, 560px)",
-    aspectRatio: "900 / 699",
+    height: "auto",
     willChange: "transform",
     opacity: driving ? 1 : 0,
   };
@@ -249,31 +283,13 @@ export default function Loader() {
 
       <div ref={coverRef} data-loader="cover" style={cover} />
 
-      <div ref={carRef} data-loader="car" style={car}>
-        {Array.from({ length: FRAME_COUNT }, (_, i) => (
-          // Deliberately a plain <img>: these are already size-optimised WebP at a
-          // fixed display size, and the loader needs to own preload/decode itself
-          // so the animation never starts on an undecoded frame.
-          // eslint-disable-next-line @next/next/no-img-element
-          <img
-            key={i}
-            ref={(el) => {
-              imgsRef.current[i] = el;
-            }}
-            src={frameSrc(i)}
-            alt=""
-            draggable={false}
-            decoding="async"
-            style={{
-              position: "absolute",
-              inset: 0,
-              width: "100%",
-              height: "100%",
-              opacity: i === 0 ? 1 : 0,
-            }}
-          />
-        ))}
-      </div>
+      <canvas
+        ref={canvasRef}
+        data-loader="car"
+        width={SPRITE_W}
+        height={SPRITE_H}
+        style={car}
+      />
 
       {/* Real asset progress, in the spirit of the reference site's counter. */}
       <div

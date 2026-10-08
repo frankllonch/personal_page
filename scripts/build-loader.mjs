@@ -11,7 +11,10 @@ const REF = 16;
 // 16/19/22 are the "cruising" pose (they differ only by hand-drawn boil);
 // 23..29 are the driver raising an arm to wave, every one distinct.
 const FRAMES = [16, 19, 22, 23, 24, 25, 26, 27, 28, 29];
-const CROP_W = 2240, CROP_H = 1740, CROP_Y = 320, BASE_X = 130;
+// Measured exactly (topmost/bottommost non-white row per frame, full res):
+// content spans y 268..2066 — the 268 is the driver's raised hand on frames
+// 26/28. An earlier crop at y=320 sliced the hand off, so keep real headroom.
+const CROP_W = 2260, CROP_H = 1840, CROP_Y = 250, BASE_X = 120;
 const TARGET_W = 900, QUALITY = 58;
 const WHITE = 225;
 // The art is really 5 flat colours; the rest is encoder noise that wrecks
