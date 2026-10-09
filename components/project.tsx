@@ -108,7 +108,7 @@ const Project = memo(function Project({
       </div>
 
       {/* SUBTITLE */}
-      <div className="relative z-20 text-sm text-neutral-600 mt-1">
+      <div className="relative z-20 text-sm text-neutral-800 mt-1">
         {subtitle}
       </div>
     </motion.div>

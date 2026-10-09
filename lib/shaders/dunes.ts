@@ -22,53 +22,58 @@ export const dunes = defineShader({
 
     /** How many dune ridges are stacked front-to-back. Range 8–40.
      *  Changing this recompiles the shader (baked in as a constant). */
-    layers: 22,
+    layers: 50,
     /** Height of the dunes, as a fraction of screen height. */
-    amplitude: 0.17,
+    amplitude: 0.1,
     /** How many dune humps fit across the screen. Range ~1–8. */
-    frequency: 2.6,
+    frequency: 10,
     /** Vertical gap between consecutive ridges. */
-    spread: 0.042,
+    spread: 0.1,
     /** Where the furthest ridge sits. 0 = bottom, 1 = top. */
-    horizon: 0.92,
+    horizon: 0.84,
     /** Extra detail on each ridge. 0 = clean sines, 1 = natural and lumpy. */
-    roughness: 0.75,
+    roughness: 1,
 
     /* --- MOTION --------------------------------------------------------- */
 
     /** Scroll speed. 0 freezes the scene. */
-    speed: 0.18,
+    speed: 0.2,
     /** How much faster near ridges scroll than far ones. */
-    parallax: 0.8,
+    parallax: 0.5,
+
+    /** How much the scene opens up as you scroll down the page. The ridges
+     *  grow and spread apart, so the landscape expands under the content.
+     *  0 = ignores scrolling, 0.5 = noticeable, 1.5 = dramatic. */
+    scrollExpand: 0.7,
 
     /* --- INTERACTION ---------------------------------------------------- */
 
-    mouseParallax: 0.18,
-    mouseSwell: 0.075,
-    mouseRadius: 0.22,
+    mouseParallax: 1,
+    mouseSwell: 0.3,
+    mouseRadius: 1,
     mouseEase: 0.08,
-    clickRipple: 0.07,
-    clickDuration: 1.6,
+    clickRipple: 5,
+    clickDuration: 0.5,
 
     /* --- COLOUR ---------------------------------------------------------- */
 
     /** Sky above the furthest ridge. */
-    colorSky: "#FBFBF3",
+    colorSky: "#ff0000",
     /** The furthest ridges. */
-    colorFar: "#EDF3D2",
+    colorFar: "#767774",
     /** The nearest ridges, at the bottom. */
-    colorNear: "#BFD95A",
+    colorNear: "#ff0000",
 
     /* --- SURFACE / PERF --------------------------------------------------- */
 
     /** Rim light along each crest, which separates overlapping ridges. */
-    shading: 0.14,
+    shading: 0.90,
     /** How tightly that rim hugs the crest. */
-    shadeFalloff: 26.0,
+    shadeFalloff: 100,
     /** Film grain. */
-    grain: 0.022,
+    grain: 0.1,
     /** Render resolution multiplier. */
-    dpr: 0.9,
+    dpr: 0.6,
   },
 
   fragment: (c) => /* glsl */ `
@@ -88,6 +93,8 @@ uniform float uClickAge;
 
 uniform float uAmplitude, uFrequency, uSpread, uHorizon, uRoughness;
 uniform float uSpeed, uParallax, uGrain;
+uniform float uScroll;        // 0 at top of page, 1 at the bottom
+uniform float uScrollExpand;
 uniform vec3  uColorSky, uColorFar, uColorNear;
 uniform float uShading, uShadeFalloff;
 uniform float uMouseParallax, uMouseSwell, uMouseRadius;
@@ -109,16 +116,24 @@ void main() {
   float clickFade = clamp(1.0 - uClickAge / max(0.0001, uClickDuration), 0.0, 1.0);
   clickFade *= clickFade;
 
+  // Scrolling down opens the landscape out.
+  float grow = 1.0 + uScroll * uScrollExpand;
+
   vec3 col = uColorSky;
 
-  for (int k = 0; k < LAYERS; k++) {
+  // Walk NEAREST to furthest and stop at the first ridge covering this pixel.
+  // Nearer ridges overwrite further ones, so the first hit going this way is
+  // the same answer as painting all of them back-to-front — but most pixels
+  // are covered by a near ridge, so it exits almost immediately.
+  for (int i = 0; i < LAYERS; i++) {
+    int k = LAYERS - 1 - i;
     float depth = float(k) / DEPTH_DIV;
 
-    float amp   = mix(uAmplitude * 0.35, uAmplitude, depth);
+    float amp   = mix(uAmplitude * 0.35, uAmplitude, depth) * grow;
     float freq  = mix(uFrequency * 1.9,  uFrequency, depth);
     float speed = mix(uSpeed * (1.0 - uParallax * 0.8), uSpeed, depth);
 
-    float baseY = uHorizon - depth * uSpread * float(LAYERS) * 0.5 + m.y * depth;
+    float baseY = uHorizon - depth * uSpread * float(LAYERS) * 0.5 * grow + m.y * depth;
 
     float x = uv.x * aspect * freq + m.x * depth * 3.0;
     float h = baseY + amp * ridge(x, float(k) * 1.37, iTime * speed);
@@ -139,6 +154,7 @@ void main() {
       float rim = exp(-(h - uv.y) * uShadeFalloff);
       base *= 1.0 + uShading * rim;
       col = base;
+      break;
     }
   }
 
@@ -159,6 +175,7 @@ void main() {
     uRoughness: { value: c.roughness },
     uSpeed: { value: c.speed },
     uParallax: { value: c.parallax },
+    uScrollExpand: { value: c.scrollExpand },
     uColorSky: { value: hexToRgb(c.colorSky) },
     uColorFar: { value: hexToRgb(c.colorFar) },
     uColorNear: { value: hexToRgb(c.colorNear) },

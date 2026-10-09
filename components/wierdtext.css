@@ -5,7 +5,9 @@
   margin: 0.2vw;
   max-width: 800px;
   font-family: monospace;
-  color: #fff;
+  /* Inherit, so the page theme decides. This was hard-coded white for the old
+     dark theme and fought every colour set on the element. */
+  color: inherit;
 }
 
 .char {

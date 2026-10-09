@@ -15,17 +15,20 @@
 
 import { dunes } from "./dunes";
 import { slopes } from "./slopes";
+import { straightLines } from "./straight-lines";
 
 export const shaders = {
   /** Pale dune ridges, near-white to yellow-green. Calm, low contrast. */
   dunes,
   /** Olive hillsides at a diagonal against blue sky, with cream rim light. */
   slopes,
+  /** The ridge field flattened into fine stacked lines. */
+  straightLines,
 };
 
 export type ShaderName = keyof typeof shaders;
 
-/** ←←← SWITCH THE BACKGROUND HERE: "dunes" | "slopes" */
-export const ACTIVE: ShaderName = "slopes";
+/** ←←← SWITCH THE BACKGROUND HERE: "dunes" | "slopes" | "straightLines" */
+export const ACTIVE: ShaderName = "dunes";
 
 export const activeShader = shaders[ACTIVE];

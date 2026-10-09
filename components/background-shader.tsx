@@ -30,6 +30,8 @@ export default function BackgroundShader() {
   const smoothed = useRef({ x: 0.5, y: 0.5 });
   // Far enough in the past that no ripple shows on first paint.
   const clickAt = useRef(-1e6);
+  const scroll = useRef(0);
+  const scrollSmoothed = useRef(0);
 
   useEffect(() => {
     const host = hostRef.current;
@@ -57,6 +59,7 @@ export default function BackgroundShader() {
         uMouse: { value: new Float32Array([0.5, 0.5]) },
         uClick: { value: new Float32Array([0.5, 0.5]) },
         uClickAge: { value: 999 },
+        uScroll: { value: 0 },
         // Everything else belongs to the active effect.
         ...activeShader.uniforms(c),
       },
@@ -75,6 +78,16 @@ export default function BackgroundShader() {
     resize();
 
     const interactive = c.mouseParallax > 0 || c.mouseSwell > 0;
+
+    // Read scroll on the event and do nothing else here: touching layout
+    // properties inside the render loop would force a reflow every frame.
+    const onScroll = () => {
+      const max = document.documentElement.scrollHeight - window.innerHeight;
+      scroll.current = max > 0 ? Math.min(1, Math.max(0, window.scrollY / max)) : 0;
+    };
+    onScroll();
+    window.addEventListener("scroll", onScroll, { passive: true });
+    window.addEventListener("resize", onScroll, { passive: true });
 
     const onPointer = (e: PointerEvent) => {
       pointer.current.x = e.clientX / window.innerWidth;
@@ -114,6 +127,10 @@ export default function BackgroundShader() {
 
       program.uniforms.uClickAge.value = (t - clickAt.current) * 0.001;
 
+      // Eased, so flicking the wheel glides the scene open instead of snapping.
+      scrollSmoothed.current += (scroll.current - scrollSmoothed.current) * 0.07;
+      program.uniforms.uScroll.value = scrollSmoothed.current;
+
       renderer.render({ scene: mesh });
     };
     // Paint one frame up front, independent of the loop: a tab that loads in
@@ -130,6 +147,8 @@ export default function BackgroundShader() {
       ro.disconnect();
       window.removeEventListener("pointermove", onPointer);
       window.removeEventListener("pointerdown", onClick);
+      window.removeEventListener("scroll", onScroll);
+      window.removeEventListener("resize", onScroll);
       if (gl.canvas.parentElement === host) host.removeChild(gl.canvas);
       gl.getExtension("WEBGL_lose_context")?.loseContext();
     };

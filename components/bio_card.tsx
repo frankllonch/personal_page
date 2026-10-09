@@ -36,7 +36,7 @@ export default function BioCard() {
 
           {/* TOP BAR */}
           <div className="shrink-0 px-4 pt-3 pb-0 flex items-center justify-between">
-            <span className="text-[11px] uppercase tracking-widest text-neutral-600">
+            <span className="text-[11px] uppercase tracking-widest text-neutral-800">
               LV. 22
             </span>
             <span className="
@@ -83,7 +83,7 @@ export default function BioCard() {
           {/* BIO */}
           <p
             className="
-              shrink-0 px-4 mt-2 pb-4 text-[13px] text-neutral-600 leading-relaxed
+              shrink-0 px-4 mt-2 pb-4 text-[13px] text-neutral-800 leading-relaxed
             "
           >
             Engineer navigating data, systems, AI automation and chaotic

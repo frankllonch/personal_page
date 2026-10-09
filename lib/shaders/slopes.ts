@@ -58,6 +58,10 @@ export const slopes = defineShader({
      *  0 = everything together, 1 = strong depth. */
     parallax: 0.85,
 
+    /** How much the scene opens up as you scroll down the page.
+     *  0 = ignores scrolling, 0.5 = noticeable, 1.5 = dramatic. */
+    scrollExpand: 0.7,
+
     /* --- INTERACTION ---------------------------------------------------- */
 
     /** How far the scene drifts as the pointer moves. */
@@ -126,6 +130,8 @@ uniform float uClickAge;
 
 uniform float uAmplitude, uFrequency, uSpread, uHorizon, uRoughness, uAngle;
 uniform float uSpeed, uParallax, uGrain;
+uniform float uScroll;        // 0 at top of page, 1 at the bottom
+uniform float uScrollExpand;
 uniform vec3  uColorSky, uColorFar, uColorHill, uColorRim;
 uniform float uRimStrength, uRimFalloff;
 uniform float uMouseParallax, uMouseSwell, uMouseRadius;
@@ -154,16 +160,22 @@ void main() {
   float clickFade = clamp(1.0 - uClickAge / max(0.0001, uClickDuration), 0.0, 1.0);
   clickFade *= clickFade;
 
+  // Scrolling down opens the landscape out.
+  float grow = 1.0 + uScroll * uScrollExpand;
+
   vec3 col = uColorSky;
 
-  for (int k = 0; k < LAYERS; k++) {
+  // Nearest first, stopping at the first hill covering this pixel — same
+  // result as painting back-to-front, but most pixels exit immediately.
+  for (int i = 0; i < LAYERS; i++) {
+    int k = LAYERS - 1 - i;
     float depth = float(k) / DEPTH_DIV;   // 0 furthest, 1 nearest
 
-    float amp   = mix(uAmplitude * 0.45, uAmplitude, depth);
+    float amp   = mix(uAmplitude * 0.45, uAmplitude, depth) * grow;
     float freq  = mix(uFrequency * 1.6,  uFrequency, depth);
     float speed = mix(uSpeed * (1.0 - uParallax * 0.8), uSpeed, depth);
 
-    float baseY = uHorizon - depth * uSpread * float(LAYERS) * 0.5 + m.y * depth;
+    float baseY = uHorizon - depth * uSpread * float(LAYERS) * 0.5 * grow + m.y * depth;
 
     float x = uv.x * freq + m.x * depth * 3.0;
     float h = baseY + amp * ridge(x, float(k) * 1.37, iTime * speed);
@@ -191,6 +203,7 @@ void main() {
       base = mix(base, uColorRim, rim * uRimStrength);
 
       col = base;
+      break;
     }
   }
 
@@ -212,6 +225,7 @@ void main() {
     uAngle: { value: (c.angle * Math.PI) / 180 },
     uSpeed: { value: c.speed },
     uParallax: { value: c.parallax },
+    uScrollExpand: { value: c.scrollExpand },
     uColorSky: { value: hexToRgb(c.colorSky) },
     uColorFar: { value: hexToRgb(c.colorFar) },
     uColorHill: { value: hexToRgb(c.colorHill) },

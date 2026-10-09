@@ -27,7 +27,7 @@ export default function ExperienceCard({
       rel="noopener noreferrer"
       className="
         w-44 min-h-[7.5rem]
-        bg-transparent backdrop-blur-[2px] hover:bg-white/20
+        bg-white/45 backdrop-blur-[3px] hover:bg-white/65
         rounded-xl p-3 flex flex-col
         shadow-lg
         border border-[#4d7c0f]/10
@@ -45,7 +45,7 @@ export default function ExperienceCard({
         <div className="w-8 h-8 relative rounded-full overflow-hidden flex-none border border-black/10">
           <Image src={image} alt={name} fill className="object-cover" sizes="32px" />
         </div>
-        <div className="text-xs text-neutral-600 uppercase">{name}</div>
+        <div className="text-xs text-neutral-800 uppercase">{name}</div>
       </div>
 
       {/* degree */}

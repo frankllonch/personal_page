@@ -248,7 +248,7 @@ export default function Home() {
             duration={0.8}
             speed={0.5}
             scrambleChars="fl"
-            className="text-6xl font-extrabold tracking-tight text-center"
+            className="on-shader text-6xl font-extrabold tracking-tight text-center text-neutral-900"
           >
             Check out my craft!
           </ScrambledText>
@@ -263,7 +263,7 @@ export default function Home() {
           {/* BIO CARD */}
           <motion.div
             variants={tileVariants}
-            className="col-span-1 row-span-2 bg-transparent hover:bg-white/25 backdrop-blur-[2px] border border-black/10 rounded-3xl relative overflow-hidden group p-1 transition-colors duration-300 will-change-transform"
+            className="col-span-1 row-span-2 bg-white/45 hover:bg-white/65 backdrop-blur-[3px] border border-black/10 rounded-3xl relative overflow-hidden group p-1 transition-colors duration-300 will-change-transform"
             onMouseMove={handle3DTilt}
             onMouseLeave={(e) => {
               e.currentTarget.style.transform = "perspective(1200px) rotateX(0deg) rotateY(0deg) scale(1)";
@@ -278,7 +278,7 @@ export default function Home() {
             <motion.div
               key={project.slug}
               variants={tileVariants}
-              className="bg-transparent hover:bg-white/25 backdrop-blur-[2px] border border-black/10 rounded-3xl shadow-xl p-4 group cursor-pointer relative overflow-hidden flex transition-colors duration-300 will-change-transform"
+              className="bg-white/45 hover:bg-white/65 backdrop-blur-[3px] border border-black/10 rounded-3xl shadow-xl p-4 group cursor-pointer relative overflow-hidden flex transition-colors duration-300 will-change-transform"
               // Sole click owner. <Project> is presentational; handling the click in
               // both places turned one click into two window.open calls (two tabs).
               onClick={() => window.open(project.link, "_blank")}
@@ -302,7 +302,7 @@ export default function Home() {
             duration={0.8}
             speed={0.5}
             scrambleChars="*"
-            className="text-6xl font-extrabold text-center"
+            className="on-shader text-6xl font-extrabold text-center text-neutral-900"
           >
             Work Experience
           </ScrambledText>
@@ -318,7 +318,7 @@ export default function Home() {
             duration={0.8}
             speed={0.5}
             scrambleChars="*"
-            className="text-6xl font-extrabold text-center"
+            className="on-shader text-6xl font-extrabold text-center text-neutral-900"
           >
             Education
           </ScrambledText>
@@ -326,7 +326,7 @@ export default function Home() {
         <Timeline items={education} />
       </section>
 
-          <footer className="py-10 text-center text-neutral-600 text-sm relative z-10">
+          <footer className="on-shader py-10 text-center text-neutral-900 text-sm relative z-10">
       <div className="flex justify-center items-center gap-4 flex-wrap">
 
         {/* Copyright */}
