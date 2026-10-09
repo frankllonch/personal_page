@@ -79,16 +79,17 @@
    through. Text is near-black; keep the shader colours light or contrast dies.
    --------------------------------------------------------------------------- */
 :root {
-  --accent: #4d7c0f;           /* deep lime — readable on white, ties to shader */
-  --accent-deep: #3f6212;
-  --accent-mute: rgba(77, 124, 15, 0.14);
+  --accent: #f4d35e;           /* warm yellow — the shader behind is dark, a dark
+                                  accent (the old deep lime) disappeared on it */
+  --accent-deep: #e8b923;
+  --accent-mute: rgba(244, 211, 94, 0.16);
 
   --bg: #fbfbf3;               /* warm off-white, matches the shader's sky */
   --bg-card: rgba(255, 255, 255, 0.58);
   --border: rgba(0, 0, 0, 0.10);
 
-  --text: #0d0d0d;
-  --text-muted: #1d1f22;      /* near-black: the shader behind is mid-tone */
+  --text: #ffffff;
+  --text-muted: #f2f2f0;      /* near-white: text sits straight on the shader */
 }
 
 html,
@@ -171,9 +172,9 @@ a:hover {
 
   background: linear-gradient(
       115deg,
-      rgba(77, 124, 15, 0.65),
+      rgba(244, 211, 94, 0.75),
       rgba(255, 255, 255, 0.5),
-      rgba(77, 124, 15, 0.65)
+      rgba(244, 211, 94, 0.75)
     )
     border-box;
 
@@ -241,12 +242,12 @@ button {
   animation: introBgFade 1800ms cubic-bezier(0.33, 1, 0.68, 1) both;
 }
 
-/* Headings sit straight on the shader with no card to lift them off it. A
-   light halo separates the glyphs from the texture without drawing a box.
-   Measured: no flat text colour clears AA against this background on its own,
-   because it spans luminance 0.14–0.46. */
+/* Text sits straight on the shader, with no card to lift it off. A dark halo
+   is what makes white glyphs survive the bright crests — measured, the
+   background spans luminance 0.14–0.46, so plain white bottoms out around
+   2:1 on the highlights and needs the shadow to carry it. */
 .on-shader {
   text-shadow:
-    0 1px 2px rgba(255, 255, 255, 0.55),
-    0 0 16px rgba(255, 255, 255, 0.4);
+    0 1px 2px rgba(0, 0, 0, 0.55),
+    0 0 14px rgba(0, 0, 0, 0.45);
 }

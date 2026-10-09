@@ -29,6 +29,6 @@ export const shaders = {
 export type ShaderName = keyof typeof shaders;
 
 /** ←←← SWITCH THE BACKGROUND HERE: "dunes" | "slopes" | "straightLines" */
-export const ACTIVE: ShaderName = "dunes";
+export const ACTIVE: ShaderName = "straightLines";
 
 export const activeShader = shaders[ACTIVE];

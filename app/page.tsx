@@ -141,7 +141,7 @@ export default function Home() {
   }, []);
 
   return (
-    <main className="relative min-h-screen text-neutral-900 bg-transparent overflow-visible z-10">
+    <main className="relative min-h-screen text-white bg-transparent overflow-visible z-10">
 
       {/* BACKGROUND — MUST BE FIRST & FIXED.
           Held back until the intro loader is gone: compiling and running a
@@ -175,7 +175,7 @@ export default function Home() {
           "
         >
           {/* TITLE */}
-          <div className="font-inter font-black tracking-tight hover:text-[#4d7c0f] transition-colors duration-300 cursor-default shrink-0">
+          <div className="on-shader font-inter font-black tracking-tight hover:text-[#F4D35E] transition-colors duration-300 cursor-default shrink-0">
             <ScrambledText
               className="scrambled-text-demo text-2xl sm:text-3xl"
               radius={30}
@@ -195,9 +195,8 @@ export default function Home() {
             "
           >
             {[
-              // invert: the GitHub mark is solid white, which vanishes on the
-              // light tiles. The other two are coloured and read fine as-is.
-              { href: "https://github.com/frankllonch", img: "/images/github-logo.png", alt: "GitHub", invert: true },
+              // The GitHub mark is natively white, which suits the white text now.
+              { href: "https://github.com/frankllonch", img: "/images/github-logo.png", alt: "GitHub", invert: false },
               { href: "https://linkedin.com/in/frankllonch", img: "/images/linkedin_logo_sq.png", alt: "LinkedIn", invert: false },
               { href: "mailto:llonchfrank@gmail.com", img: "/images/email.png", alt: "Email", invert: false },
             ].map((s) => (
@@ -232,7 +231,7 @@ export default function Home() {
             >
               {/* a plain div: globals.css has unlayered `a`/`span` colour rules that
                   outrank Tailwind's layered utilities, so neither works here */}
-              <div className="text-neutral-900 group-hover:text-[#4d7c0f] font-bold text-xs sm:text-sm tracking-wide transition-colors duration-300">
+              <div className="on-shader text-white group-hover:text-[#F4D35E] font-bold text-xs sm:text-sm tracking-wide transition-colors duration-300">
                 CV
               </div>
             </motion.a>
@@ -248,7 +247,7 @@ export default function Home() {
             duration={0.8}
             speed={0.5}
             scrambleChars="fl"
-            className="on-shader text-6xl font-extrabold tracking-tight text-center text-neutral-900"
+            className="on-shader text-6xl font-extrabold tracking-tight text-center text-white"
           >
             Check out my craft!
           </ScrambledText>
@@ -263,7 +262,7 @@ export default function Home() {
           {/* BIO CARD */}
           <motion.div
             variants={tileVariants}
-            className="col-span-1 row-span-2 bg-white/45 hover:bg-white/65 backdrop-blur-[3px] border border-black/10 rounded-3xl relative overflow-hidden group p-1 transition-colors duration-300 will-change-transform"
+            className="col-span-1 row-span-2 bg-transparent hover:bg-white/10 backdrop-blur-[2px] border border-white/20 rounded-3xl relative overflow-hidden group p-1 transition-colors duration-300 will-change-transform"
             onMouseMove={handle3DTilt}
             onMouseLeave={(e) => {
               e.currentTarget.style.transform = "perspective(1200px) rotateX(0deg) rotateY(0deg) scale(1)";
@@ -278,7 +277,7 @@ export default function Home() {
             <motion.div
               key={project.slug}
               variants={tileVariants}
-              className="bg-white/45 hover:bg-white/65 backdrop-blur-[3px] border border-black/10 rounded-3xl shadow-xl p-4 group cursor-pointer relative overflow-hidden flex transition-colors duration-300 will-change-transform"
+              className="bg-transparent hover:bg-white/10 backdrop-blur-[2px] border border-white/20 rounded-3xl shadow-xl p-4 group cursor-pointer relative overflow-hidden flex transition-colors duration-300 will-change-transform"
               // Sole click owner. <Project> is presentational; handling the click in
               // both places turned one click into two window.open calls (two tabs).
               onClick={() => window.open(project.link, "_blank")}
@@ -302,7 +301,7 @@ export default function Home() {
             duration={0.8}
             speed={0.5}
             scrambleChars="*"
-            className="on-shader text-6xl font-extrabold text-center text-neutral-900"
+            className="on-shader text-6xl font-extrabold text-center text-white"
           >
             Work Experience
           </ScrambledText>
@@ -318,7 +317,7 @@ export default function Home() {
             duration={0.8}
             speed={0.5}
             scrambleChars="*"
-            className="on-shader text-6xl font-extrabold text-center text-neutral-900"
+            className="on-shader text-6xl font-extrabold text-center text-white"
           >
             Education
           </ScrambledText>
@@ -326,7 +325,7 @@ export default function Home() {
         <Timeline items={education} />
       </section>
 
-          <footer className="on-shader py-10 text-center text-neutral-900 text-sm relative z-10">
+          <footer className="on-shader py-10 text-center text-white text-sm relative z-10">
       <div className="flex justify-center items-center gap-4 flex-wrap">
 
         {/* Copyright */}
@@ -341,7 +340,7 @@ export default function Home() {
           href="https://github.com/frankllonch/personal_page"
           target="_blank"
           rel="noopener noreferrer"
-          className="hover:text-[#4d7c0f] transition-colors duration-300"
+          className="hover:text-[#F4D35E] transition-colors duration-300"
         >
           Fork this project ↗
         </a>
@@ -353,7 +352,7 @@ export default function Home() {
           href="https://gabrielferrate.com"
           target="_blank"
           rel="noopener noreferrer"
-          className="hover:text-[#4d7c0f] transition-colors duration-300"
+          className="hover:text-[#F4D35E] transition-colors duration-300"
         >
           Inspired by gabrielferrate.com ↗
         </a>

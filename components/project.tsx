@@ -32,7 +32,7 @@ const Project = memo(function Project({
       className="
         w-full h-full
         bg-transparent
-        border border-black/5
+        border border-white/10
         rounded-xl p-4
         shadow-lg cursor-pointer
         hover:shadow-xl
@@ -50,8 +50,8 @@ const Project = memo(function Project({
         {isNew && (
           <div className="
             text-[10px] uppercase px-3 py-0.6
-            bg-[#4d7c0f] border-l border-b border-black/10
-            rounded-bl-md text-white
+            bg-[#F4D35E] border-l border-b border-black/20
+            rounded-bl-md text-neutral-900
           ">
             NEW
           </div>
@@ -93,8 +93,8 @@ const Project = memo(function Project({
             key={i}
             className="
               text-[10px] uppercase px-3 py-0.6 mt-[1px]
-              bg-black/5
-              rounded-bl-md text-neutral-700
+              bg-black/30
+              rounded-bl-md text-white
             "
           >
             {tag}
@@ -103,12 +103,12 @@ const Project = memo(function Project({
       </div>
 
       {/* TITLE */}
-      <div className="relative z-20 text-base font-semibold text-neutral-900">
+      <div className="relative z-20 on-shader text-base font-semibold text-white">
         {title}
       </div>
 
       {/* SUBTITLE */}
-      <div className="relative z-20 text-sm text-neutral-800 mt-1">
+      <div className="relative z-20 on-shader text-sm text-neutral-100 mt-1">
         {subtitle}
       </div>
     </motion.div>
