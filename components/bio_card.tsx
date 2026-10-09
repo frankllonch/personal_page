@@ -26,9 +26,9 @@ export default function BioCard() {
           className="
             absolute inset-0
             rounded-3xl
-            shadow-[0_18px_50px_rgba(0,0,0,0.75)]
+            shadow-[0_10px_30px_rgba(0,0,0,0.10)]
             overflow-hidden
-            border border-white/15
+            border border-black/10
             flex flex-col
           "
           style={{ backfaceVisibility: "hidden" }}
@@ -36,13 +36,13 @@ export default function BioCard() {
 
           {/* TOP BAR */}
           <div className="shrink-0 px-4 pt-3 pb-0 flex items-center justify-between">
-            <span className="text-[11px] uppercase tracking-widest text-gray-400">
+            <span className="text-[11px] uppercase tracking-widest text-neutral-600">
               LV. 22
             </span>
             <span className="
               text-[10px] px-2 py-[2px]
-              rounded-full border border-white/15
-              text-gray-300 tracking-wider
+              rounded-full border border-black/10
+              text-neutral-700 tracking-wider
             ">
               HUMAN
             </span>
@@ -55,8 +55,8 @@ export default function BioCard() {
               className="
                 relative w-full h-full
                 rounded-3xl overflow-hidden
-                shadow-[0_12px_45px_rgba(0,0,0,0.9)]
-                border border-white/15
+                shadow-[0_6px_20px_rgba(0,0,0,0.12)]
+                border border-black/10
               "
             >
 
@@ -74,7 +74,7 @@ export default function BioCard() {
           {/* NAME */}
           <p
             className="
-              shrink-0 px-4 mt-3 text-2xl font-black tracking-tight text-white
+              shrink-0 px-4 mt-3 text-2xl font-black tracking-tight text-neutral-900
             "
           >
             Frank Llonch
@@ -83,7 +83,7 @@ export default function BioCard() {
           {/* BIO */}
           <p
             className="
-              shrink-0 px-4 mt-2 pb-4 text-[13px] text-gray-400 leading-relaxed
+              shrink-0 px-4 mt-2 pb-4 text-[13px] text-neutral-600 leading-relaxed
             "
           >
             Engineer navigating data, systems, AI automation and chaotic
@@ -101,7 +101,7 @@ export default function BioCard() {
             rounded-3xl 
             flex items-center justify-center
             overflow-hidden
-            border border-white/15
+            border border-black/10
             p-6
           "
           style={{
@@ -116,12 +116,12 @@ export default function BioCard() {
               speed={0.5}
               scrambleChars=".:"
               className="
-                text-[#F4D35E]/80
+                text-[#4d7c0f]
                 font-inter
                 font-medium
                 leading-relaxed
                 text-center
-                drop-shadow-[0_0_25px_rgba(244,211,94,0.25)]
+                
               "
               style={{
                 fontSize: "clamp(13px, 1.4vw, 18px)",

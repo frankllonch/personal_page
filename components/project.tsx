@@ -32,7 +32,7 @@ const Project = memo(function Project({
       className="
         w-full h-full
         bg-transparent
-        border border-[#F4D35E]/10
+        border border-black/5
         rounded-xl p-4
         shadow-lg cursor-pointer
         hover:shadow-xl
@@ -50,7 +50,7 @@ const Project = memo(function Project({
         {isNew && (
           <div className="
             text-[10px] uppercase px-3 py-0.6
-            bg-green-500/30 border-l border-b border-white/20
+            bg-[#4d7c0f] border-l border-b border-black/10
             rounded-bl-md text-white
           ">
             NEW
@@ -60,7 +60,7 @@ const Project = memo(function Project({
         {starred && (
           <div className="
             text-[10px] uppercase px-3 py-0.6
-            bg-yellow-500/30 border-l border-b border-white/20
+            bg-[#b7891b] border-l border-b border-black/10
             rounded-bl-md text-white
           ">
             STARRED
@@ -70,7 +70,7 @@ const Project = memo(function Project({
         {isUpcoming && (
           <div className="
             text-[10px] uppercase px-3 py-0.6
-            bg-purple-500/30 border-l border-b border-white/20
+            bg-[#6d4aa6] border-l border-b border-black/10
             rounded-bl-md text-white
           ">
             UPCOMING
@@ -80,7 +80,7 @@ const Project = memo(function Project({
         {pinned && (
           <div className="
             text-[10px] uppercase px-3 py-0.6
-            bg-blue-500/30 border-l border-b border-white/20
+            bg-[#2a5f9e] border-l border-b border-black/10
             rounded-bl-md text-white
           ">
             PINNED
@@ -93,9 +93,8 @@ const Project = memo(function Project({
             key={i}
             className="
               text-[10px] uppercase px-3 py-0.6 mt-[1px]
-              bg-yellow-400/10
-              from-[#F4D35E]/10 to-[#E8B923]/15
-              rounded-bl-md text-white
+              bg-black/5
+              rounded-bl-md text-neutral-700
             "
           >
             {tag}
@@ -104,12 +103,12 @@ const Project = memo(function Project({
       </div>
 
       {/* TITLE */}
-      <div className="relative z-20 text-base font-semibold text-white">
+      <div className="relative z-20 text-base font-semibold text-neutral-900">
         {title}
       </div>
 
       {/* SUBTITLE */}
-      <div className="relative z-20 text-sm text-gray-300 mt-1">
+      <div className="relative z-20 text-sm text-neutral-600 mt-1">
         {subtitle}
       </div>
     </motion.div>

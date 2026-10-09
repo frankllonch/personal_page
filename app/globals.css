@@ -73,17 +73,22 @@
 /* 🎨 GLOBAL THEME — BLACK + UNSATURATED YELLOW                               */
 /* -------------------------------------------------------------------------- */
 
+/* ---------------------------------------------------------------------------
+   PALETTE — light theme. The background is a live WebGL shader (see
+   lib/shaderConfig.ts), so page/card surfaces are translucent and let it show
+   through. Text is near-black; keep the shader colours light or contrast dies.
+   --------------------------------------------------------------------------- */
 :root {
-  --accent: #f4d35e;           /* soft, unsaturated yellow */
-  --accent-deep: #e8b923;      /* darker gold */
-  --accent-mute: rgba(244, 211, 94, 0.15);
+  --accent: #4d7c0f;           /* deep lime — readable on white, ties to shader */
+  --accent-deep: #3f6212;
+  --accent-mute: rgba(77, 124, 15, 0.14);
 
-  --bg: #000000;               /* pure black */
-  --bg-card: #0a0a0a;          /* slightly lifted black for tiles */
-  --border: rgba(255, 255, 255, 0.08);
+  --bg: #fbfbf3;               /* warm off-white, matches the shader's sky */
+  --bg-card: rgba(255, 255, 255, 0.58);
+  --border: rgba(0, 0, 0, 0.10);
 
-  --text: #ffffff;
-  --text-muted: #dddddd;
+  --text: #0d0d0d;
+  --text-muted: #44474a;
 }
 
 html,
@@ -92,22 +97,6 @@ body {
   color: var(--text);
   font-family: "Inter", sans-serif;
   overflow-x: hidden;
-}
-
-html {
-  background: #000000;
-  color: white;
-}
-
-body {
-  background: #000000;
-  color: white;
-}
-
-html,
-body {
-  background-color: #000000;
-  color: #ffffff;
 }
 
 /* -------------------------------------------------------------------------- */
@@ -182,9 +171,9 @@ a:hover {
 
   background: linear-gradient(
       115deg,
-      rgba(244, 211, 94, 0.8),
+      rgba(77, 124, 15, 0.65),
       rgba(255, 255, 255, 0.5),
-      rgba(244, 211, 94, 0.8)
+      rgba(77, 124, 15, 0.65)
     )
     border-box;
 
@@ -215,7 +204,7 @@ a:hover {
   border-radius: 50%;
   pointer-events: none;
   transform: translate(-50%, -50%);
-  mix-blend-mode: screen;
+  mix-blend-mode: multiply;
   z-index: 9999;
   transition: transform 0.1s;
 }
@@ -237,19 +226,6 @@ video {
 
 button {
   font-family: inherit;
-}
-
-:root {
-  --accent: #f4d35e;          
-  --accent-deep: #e8b923;     
-  --accent-mute: rgba(244, 211, 94, 0.15);
-
-  --bg: #000000;               /* pure black now */
-  --bg-card: #0a0a0a;
-  --border: rgba(255, 255, 255, 0.08);
-
-  --text: #ffffff;
-  --text-muted: #dddddd;
 }
 /* Intro: the WebGL background mounts as the loader's curtain lifts and eases
    up over it. A keyframe rather than a JS-triggered transition, so the fade

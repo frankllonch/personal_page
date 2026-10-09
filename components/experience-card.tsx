@@ -27,10 +27,10 @@ export default function ExperienceCard({
       rel="noopener noreferrer"
       className="
         w-44 min-h-[7.5rem]
-        bg-black/25 hover:bg-black/75
+        bg-white/60 hover:bg-white/85
         rounded-xl p-3 flex flex-col
         shadow-lg
-        border border-[#F4D35E]/10
+        border border-[#4d7c0f]/10
         relative group overflow-hidden
         will-change-transform
         transition-colors duration-300
@@ -42,19 +42,19 @@ export default function ExperienceCard({
 
       {/* top row */}
       <div className="flex items-center space-x-2 relative z-20">
-        <div className="w-8 h-8 relative rounded-full overflow-hidden flex-none border border-white/20">
+        <div className="w-8 h-8 relative rounded-full overflow-hidden flex-none border border-black/10">
           <Image src={image} alt={name} fill className="object-cover" sizes="32px" />
         </div>
-        <div className="text-xs text-gray-300 uppercase">{name}</div>
+        <div className="text-xs text-neutral-600 uppercase">{name}</div>
       </div>
 
       {/* degree */}
-      <div className="text-sm mt-3 relative z-20 text-white">
+      <div className="text-sm mt-3 relative z-20 text-neutral-900">
         {degree}
       </div>
 
       {/* location */}
-      <div className="text-xs text-blue-300 mt-1 relative z-20 font-medium">
+      <div className="text-xs text-[#4d7c0f] mt-1 relative z-20 font-medium">
         {country}, {year}
       </div>
     </motion.a>

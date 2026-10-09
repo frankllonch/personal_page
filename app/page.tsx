@@ -6,7 +6,7 @@ import Image from "next/image";
 import dynamic from "next/dynamic";
 
 // Backgrounds
-const FaultyBackground = dynamic(() => import("@/components/FaultyBackground"), { ssr: false });
+const SiteBackground = dynamic(() => import("@/components/site-background"), { ssr: false });
 
 // Content
 import Project from "@/components/project";
@@ -71,8 +71,8 @@ function handle3DTilt(e: React.MouseEvent<HTMLDivElement>) {
 const TILE_CLASS = `
   h-8 w-8 sm:h-9 sm:w-9 shrink-0
   flex items-center justify-center
-  bg-black border border-white/20 rounded-xl
-  shadow-[0_0_15px_rgba(244,211,94,0.15)]
+  bg-white/80 border border-black/10 rounded-xl
+  shadow-[0_1px_6px_rgba(0,0,0,0.07)]
 `;
 const TILE_HOVER = { scale: 1.08, y: -2 };
 const TILE_SPRING = { type: "spring", stiffness: 240, damping: 16 } as const;
@@ -124,8 +124,8 @@ export default function Home() {
     // that costs, and that still waits for the intro to finish. Without this
     // the two chained dynamic imports only start once the curtain is already
     // lifting, so the background showed up a few hundred ms late.
-    void import("@/components/FaultyBackground");
-    void import("@/components/Faultyterminal");
+    void import("@/components/site-background");
+    void import("@/components/dunes-shader");
 
     if (isIntroDone()) {
       setBackgroundReady(true);
@@ -141,13 +141,13 @@ export default function Home() {
   }, []);
 
   return (
-    <main className="relative min-h-screen text-white bg-transparent overflow-visible z-10">
+    <main className="relative min-h-screen text-neutral-900 bg-transparent overflow-visible z-10">
 
       {/* BACKGROUND — MUST BE FIRST & FIXED.
           Held back until the intro loader is gone: compiling and running a
           full-screen WebGL shader while the loader animates made the intro
           stutter badly on Safari. It fades itself in on mount. */}
-      {backgroundReady && <FaultyBackground />}
+      {backgroundReady && <SiteBackground />}
 
 
       {/* TOP BAR — SIGNATURE + SOCIALS
@@ -160,8 +160,8 @@ export default function Home() {
         transition={{ duration: 0.35, ease: [0.25, 0.1, 0.25, 1] }}
         className="
           fixed top-0 inset-x-0 z-[200]
-          bg-black/40 backdrop-blur-md
-          border-b border-white/10
+          bg-white/55 backdrop-blur-md
+          border-b border-black/10
           will-change-transform
         "
       >
@@ -173,7 +173,7 @@ export default function Home() {
           "
         >
           {/* TITLE */}
-          <div className="font-inter font-black tracking-tight hover:text-black transition-colors duration-300 cursor-default shrink-0">
+          <div className="font-inter font-black tracking-tight hover:text-[#4d7c0f] transition-colors duration-300 cursor-default shrink-0">
             <ScrambledText
               className="scrambled-text-demo text-2xl sm:text-3xl"
               radius={30}
@@ -193,9 +193,11 @@ export default function Home() {
             "
           >
             {[
-              { href: "https://github.com/frankllonch", img: "/images/github-logo.png", alt: "GitHub" },
-              { href: "https://linkedin.com/in/frankllonch", img: "/images/linkedin_logo_sq.png", alt: "LinkedIn" },
-              { href: "mailto:llonchfrank@gmail.com", img: "/images/email.png", alt: "Email" },
+              // invert: the GitHub mark is solid white, which vanishes on the
+              // light tiles. The other two are coloured and read fine as-is.
+              { href: "https://github.com/frankllonch", img: "/images/github-logo.png", alt: "GitHub", invert: true },
+              { href: "https://linkedin.com/in/frankllonch", img: "/images/linkedin_logo_sq.png", alt: "LinkedIn", invert: false },
+              { href: "mailto:llonchfrank@gmail.com", img: "/images/email.png", alt: "Email", invert: false },
             ].map((s) => (
               <motion.a
                 key={s.href}
@@ -206,7 +208,13 @@ export default function Home() {
                 transition={TILE_SPRING}
                 className={TILE_CLASS}
               >
-                <Image src={s.img} alt={s.alt} width={18} height={18} />
+                <Image
+                  src={s.img}
+                  alt={s.alt}
+                  width={18}
+                  height={18}
+                  style={s.invert ? { filter: "invert(1)" } : undefined}
+                />
               </motion.a>
             ))}
 
@@ -218,11 +226,11 @@ export default function Home() {
               whileHover={TILE_HOVER}
               transition={TILE_SPRING}
               aria-label="Curriculum Vitae (PDF)"
-              className={`${TILE_CLASS} group hover:bg-white transition-colors duration-300`}
+              className={`${TILE_CLASS} group hover:bg-neutral-900 transition-colors duration-300`}
             >
               {/* a plain div: globals.css has unlayered `a`/`span` colour rules that
                   outrank Tailwind's layered utilities, so neither works here */}
-              <div className="text-white group-hover:text-black font-bold text-xs sm:text-sm tracking-wide transition-colors duration-300">
+              <div className="text-neutral-900 group-hover:text-white font-bold text-xs sm:text-sm tracking-wide transition-colors duration-300">
                 CV
               </div>
             </motion.a>
@@ -253,7 +261,7 @@ export default function Home() {
           {/* BIO CARD */}
           <motion.div
             variants={tileVariants}
-            className="col-span-1 row-span-2 bg-black/25 hover:bg-black/60 backdrop-blur-sm border border-white/15 rounded-3xl relative overflow-hidden group p-1 transition-colors duration-300 will-change-transform"
+            className="col-span-1 row-span-2 bg-white/55 hover:bg-white/80 backdrop-blur-sm border border-black/10 rounded-3xl relative overflow-hidden group p-1 transition-colors duration-300 will-change-transform"
             onMouseMove={handle3DTilt}
             onMouseLeave={(e) => {
               e.currentTarget.style.transform = "perspective(1200px) rotateX(0deg) rotateY(0deg) scale(1)";
@@ -268,7 +276,7 @@ export default function Home() {
             <motion.div
               key={project.slug}
               variants={tileVariants}
-              className="bg-black/25 hover:bg-black/60 backdrop-blur-sm border border-white/15 rounded-3xl shadow-xl p-4 group cursor-pointer relative overflow-hidden flex transition-colors duration-300 will-change-transform"
+              className="bg-white/55 hover:bg-white/80 backdrop-blur-sm border border-black/10 rounded-3xl shadow-xl p-4 group cursor-pointer relative overflow-hidden flex transition-colors duration-300 will-change-transform"
               // Sole click owner. <Project> is presentational; handling the click in
               // both places turned one click into two window.open calls (two tabs).
               onClick={() => window.open(project.link, "_blank")}
@@ -316,7 +324,7 @@ export default function Home() {
         <Timeline items={education} />
       </section>
 
-          <footer className="py-10 text-center text-gray-500 text-sm relative z-10">
+          <footer className="py-10 text-center text-neutral-600 text-sm relative z-10">
       <div className="flex justify-center items-center gap-4 flex-wrap">
 
         {/* Copyright */}
@@ -331,7 +339,7 @@ export default function Home() {
           href="https://github.com/frankllonch/personal_page"
           target="_blank"
           rel="noopener noreferrer"
-          className="hover:text-[#F4D35E] transition-colors duration-300"
+          className="hover:text-[#4d7c0f] transition-colors duration-300"
         >
           Fork this project ↗
         </a>
@@ -343,7 +351,7 @@ export default function Home() {
           href="https://gabrielferrate.com"
           target="_blank"
           rel="noopener noreferrer"
-          className="hover:text-[#F4D35E] transition-colors duration-300"
+          className="hover:text-[#4d7c0f] transition-colors duration-300"
         >
           Inspired by gabrielferrate.com ↗
         </a>
