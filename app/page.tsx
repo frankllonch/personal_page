@@ -68,11 +68,11 @@ function handle3DTilt(e: React.MouseEvent<HTMLDivElement>) {
 
 
 // Shared look and feel for the square tiles in the top bar (socials + CV).
+// No chip behind the icons — they sit straight on the page like the
+// signature does. Only the sizing and centring remain.
 const TILE_CLASS = `
   h-8 w-8 sm:h-9 sm:w-9 shrink-0
   flex items-center justify-center
-  bg-white/80 border border-black/10 rounded-xl
-  shadow-[0_1px_6px_rgba(0,0,0,0.07)]
 `;
 const TILE_HOVER = { scale: 1.08, y: -2 };
 const TILE_SPRING = { type: "spring", stiffness: 240, damping: 16 } as const;
@@ -228,11 +228,11 @@ export default function Home() {
               whileHover={TILE_HOVER}
               transition={TILE_SPRING}
               aria-label="Curriculum Vitae (PDF)"
-              className={`${TILE_CLASS} group hover:bg-neutral-900 transition-colors duration-300`}
+              className={`${TILE_CLASS} group`}
             >
               {/* a plain div: globals.css has unlayered `a`/`span` colour rules that
                   outrank Tailwind's layered utilities, so neither works here */}
-              <div className="text-neutral-900 group-hover:text-white font-bold text-xs sm:text-sm tracking-wide transition-colors duration-300">
+              <div className="text-neutral-900 group-hover:text-[#4d7c0f] font-bold text-xs sm:text-sm tracking-wide transition-colors duration-300">
                 CV
               </div>
             </motion.a>
