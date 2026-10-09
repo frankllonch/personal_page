@@ -44,7 +44,7 @@ export const straightLines = {
 
     colorSky: "#000000",
     colorFar: "#39507d",
-    colorNear: "#5f3300",
+    colorNear: "#92d58c",
 
     /** Hard, tight rim is what makes each crest read as a drawn line. */
     shading: 0.9,
