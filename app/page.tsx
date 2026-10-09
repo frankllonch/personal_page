@@ -246,7 +246,7 @@ export default function Home() {
             radius={30}
             duration={0.8}
             speed={0.5}
-            scrambleChars="fl"
+            scrambleChars="*"
             className="on-shader text-6xl font-extrabold tracking-tight text-center text-white"
           >
             Projects
