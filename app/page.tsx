@@ -261,7 +261,7 @@ export default function Home() {
           {/* BIO CARD */}
           <motion.div
             variants={tileVariants}
-            className="col-span-1 row-span-2 bg-white/55 hover:bg-white/80 backdrop-blur-sm border border-black/10 rounded-3xl relative overflow-hidden group p-1 transition-colors duration-300 will-change-transform"
+            className="col-span-1 row-span-2 bg-transparent hover:bg-white/25 backdrop-blur-[2px] border border-black/10 rounded-3xl relative overflow-hidden group p-1 transition-colors duration-300 will-change-transform"
             onMouseMove={handle3DTilt}
             onMouseLeave={(e) => {
               e.currentTarget.style.transform = "perspective(1200px) rotateX(0deg) rotateY(0deg) scale(1)";
@@ -276,7 +276,7 @@ export default function Home() {
             <motion.div
               key={project.slug}
               variants={tileVariants}
-              className="bg-white/55 hover:bg-white/80 backdrop-blur-sm border border-black/10 rounded-3xl shadow-xl p-4 group cursor-pointer relative overflow-hidden flex transition-colors duration-300 will-change-transform"
+              className="bg-transparent hover:bg-white/25 backdrop-blur-[2px] border border-black/10 rounded-3xl shadow-xl p-4 group cursor-pointer relative overflow-hidden flex transition-colors duration-300 will-change-transform"
               // Sole click owner. <Project> is presentational; handling the click in
               // both places turned one click into two window.open calls (two tabs).
               onClick={() => window.open(project.link, "_blank")}

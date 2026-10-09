@@ -27,7 +27,7 @@ export default function ExperienceCard({
       rel="noopener noreferrer"
       className="
         w-44 min-h-[7.5rem]
-        bg-white/60 hover:bg-white/85
+        bg-transparent backdrop-blur-[2px] hover:bg-white/20
         rounded-xl p-3 flex flex-col
         shadow-lg
         border border-[#4d7c0f]/10

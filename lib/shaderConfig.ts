@@ -60,9 +60,31 @@ export const shaderConfig = {
    *  0 = everything moves together (flat), 1 = strong sense of depth. */
   parallax: 0.8,
 
-  /** How far the scene shifts as the pointer moves. 0 disables mouse
-   *  interaction completely. Try 0.05 for a subtle drift. */
-  mouseStrength: 0.03,
+  /* --- INTERACTION ------------------------------------------------------
+   *  The shader draws; these are the values JavaScript feeds it so it reacts
+   *  to you. Set them all to 0 for a purely ambient background.             */
+
+  /** How far the whole scene drifts as the pointer moves, like looking around
+   *  the landscape. 0 = locked, 0.15 = gentle, 0.5 = very loose. */
+  mouseParallax: 0.18,
+
+  /** How much the dunes swell upward under the cursor — the main "this is
+   *  alive" cue. 0 = flat, 0.06 = subtle lift, 0.2 = a big bulge. */
+  mouseSwell: 0.075,
+
+  /** Width of that swell, as a fraction of screen width.
+   *  Small = a tight localised poke, large = a broad gentle hill. */
+  mouseRadius: 0.22,
+
+  /** How fast the swell chases the pointer. 1 = glued to the cursor,
+   *  0.02 = heavy and laggy. */
+  mouseEase: 0.08,
+
+  /** Height of the ripple that fires when you click. 0 disables clicking. */
+  clickRipple: 0.07,
+
+  /** How long a click ripple lasts, in seconds. */
+  clickDuration: 1.6,
 
   /* --- COLOUR ----------------------------------------------------------- */
   /*  Any CSS hex string. The page text is black, so keep these light or the

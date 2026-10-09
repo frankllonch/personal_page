@@ -48,8 +48,14 @@ uniform float uHorizon;
 uniform float uRoughness;
 uniform float uSpeed;
 uniform float uParallax;
-uniform vec2  uMouse;
-uniform float uMouseStrength;
+uniform vec2  uMouse;          // smoothed pointer, 0..1, y up
+uniform float uMouseParallax;
+uniform float uMouseSwell;
+uniform float uMouseRadius;
+uniform vec2  uClick;          // where the last click landed
+uniform float uClickAge;       // seconds since it landed
+uniform float uClickRipple;
+uniform float uClickDuration;
 uniform vec3  uColorSky;
 uniform vec3  uColorFar;
 uniform vec3  uColorNear;
@@ -70,7 +76,14 @@ void main() {
   vec2 uv = vUv;
   float aspect = max(0.0001, iResolution.x / iResolution.y);
 
-  vec2 m = (uMouse - 0.5) * uMouseStrength;
+  // Pointer drift: shifts the whole stack, so the scene feels like it is
+  // being looked around rather than just sitting there.
+  vec2 m = (uMouse - 0.5) * uMouseParallax;
+
+  // Click ripple: a radial wave that decays over uClickDuration.
+  float clickT = uClickAge / max(0.0001, uClickDuration);
+  float clickFade = clamp(1.0 - clickT, 0.0, 1.0);
+  clickFade *= clickFade;
 
   vec3 col = uColorSky;
 
@@ -88,6 +101,20 @@ void main() {
 
     float x = uv.x * aspect * freq + m.x * depth * 3.0;
     float h = baseY + amp * ridge(x, float(k) * 1.37, iTime * speed);
+
+    // Swell: the ridges bulge up toward the cursor. Nearer ridges react more,
+    // which keeps the depth reading intact while it deforms.
+    if (uMouseSwell > 0.0) {
+      float dx = (uv.x - uMouse.x) / max(0.0001, uMouseRadius);
+      h += uMouseSwell * exp(-dx * dx) * mix(0.35, 1.0, depth);
+    }
+
+    // Ripple from the last click, travelling outward and fading.
+    if (uClickRipple > 0.0 && clickFade > 0.0) {
+      float d = distance(vec2(uv.x * aspect, uv.y), vec2(uClick.x * aspect, uClick.y));
+      float wave = sin(d * 16.0 - uClickAge * 7.0) * exp(-d * 2.6);
+      h += uClickRipple * wave * clickFade * mix(0.4, 1.0, depth);
+    }
 
     if (uv.y < h) {
       vec3 base = mix(uColorFar, uColorNear, depth);
@@ -122,6 +149,8 @@ export default function DunesShader() {
   const hostRef = useRef<HTMLDivElement>(null);
   const pointer = useRef({ x: 0.5, y: 0.5 });
   const smoothed = useRef({ x: 0.5, y: 0.5 });
+  // Far enough in the past that no ripple shows on first paint.
+  const clickAt = useRef(-1e6);
 
   useEffect(() => {
     const host = hostRef.current;
@@ -151,7 +180,13 @@ export default function DunesShader() {
         uSpeed: { value: c.speed },
         uParallax: { value: c.parallax },
         uMouse: { value: new Float32Array([0.5, 0.5]) },
-        uMouseStrength: { value: c.mouseStrength },
+        uMouseParallax: { value: c.mouseParallax },
+        uMouseSwell: { value: c.mouseSwell },
+        uMouseRadius: { value: c.mouseRadius },
+        uClick: { value: new Float32Array([0.5, 0.5]) },
+        uClickAge: { value: 999 },
+        uClickRipple: { value: c.clickRipple },
+        uClickDuration: { value: c.clickDuration },
         uColorSky: { value: new Float32Array(hexToRgb(c.colorSky)) },
         uColorFar: { value: new Float32Array(hexToRgb(c.colorFar)) },
         uColorNear: { value: new Float32Array(hexToRgb(c.colorNear)) },
@@ -173,11 +208,24 @@ export default function DunesShader() {
     ro.observe(host);
     resize();
 
+    const interactive = c.mouseParallax > 0 || c.mouseSwell > 0;
+
     const onPointer = (e: PointerEvent) => {
       pointer.current.x = e.clientX / window.innerWidth;
       pointer.current.y = 1 - e.clientY / window.innerHeight;
     };
-    if (c.mouseStrength > 0) window.addEventListener("pointermove", onPointer, { passive: true });
+    const onClick = (e: PointerEvent) => {
+      const cl = program.uniforms.uClick.value as Float32Array;
+      cl[0] = e.clientX / window.innerWidth;
+      cl[1] = 1 - e.clientY / window.innerHeight;
+      clickAt.current = performance.now();
+    };
+
+    // The background sits behind everything and is pointer-events:none, so
+    // listen on the window — clicks on cards and links still register here
+    // without the shader ever intercepting them.
+    if (interactive) window.addEventListener("pointermove", onPointer, { passive: true });
+    if (c.clickRipple > 0) window.addEventListener("pointerdown", onClick, { passive: true });
 
     let raf = 0;
     const render = (t: number) => {
@@ -188,13 +236,15 @@ export default function DunesShader() {
 
       program.uniforms.iTime.value = reduced ? 0 : t * 0.001;
 
-      if (c.mouseStrength > 0) {
-        smoothed.current.x += (pointer.current.x - smoothed.current.x) * 0.05;
-        smoothed.current.y += (pointer.current.y - smoothed.current.y) * 0.05;
+      if (interactive) {
+        smoothed.current.x += (pointer.current.x - smoothed.current.x) * c.mouseEase;
+        smoothed.current.y += (pointer.current.y - smoothed.current.y) * c.mouseEase;
         const mu = program.uniforms.uMouse.value as Float32Array;
         mu[0] = smoothed.current.x;
         mu[1] = smoothed.current.y;
       }
+
+      program.uniforms.uClickAge.value = (t - clickAt.current) * 0.001;
 
       renderer.render({ scene: mesh });
     };
@@ -206,6 +256,7 @@ export default function DunesShader() {
       cancelAnimationFrame(raf);
       ro.disconnect();
       window.removeEventListener("pointermove", onPointer);
+      window.removeEventListener("pointerdown", onClick);
       if (gl.canvas.parentElement === host) host.removeChild(gl.canvas);
       gl.getExtension("WEBGL_lose_context")?.loseContext();
     };
