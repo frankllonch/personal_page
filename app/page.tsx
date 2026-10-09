@@ -249,7 +249,7 @@ export default function Home() {
             scrambleChars="fl"
             className="on-shader text-6xl font-extrabold tracking-tight text-center text-white"
           >
-            Check out my craft!
+            Projects
           </ScrambledText>
         </div>
 

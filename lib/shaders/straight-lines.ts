@@ -33,7 +33,7 @@ export const straightLines = {
 
     speed: 0.18,
     parallax: 0.8,
-    scrollExpand: 0.7,
+    scrollExpand: 1.5,
 
     mouseParallax: 0.18,
     mouseSwell: 0.075,
@@ -42,9 +42,9 @@ export const straightLines = {
     clickRipple: 0.07,
     clickDuration: 1.6,
 
-    colorSky: "#ff0000",
-    colorFar: "#767774",
-    colorNear: "#ff0000",
+    colorSky: "#000000",
+    colorFar: "#39507d",
+    colorNear: "#5f3300",
 
     /** Hard, tight rim is what makes each crest read as a drawn line. */
     shading: 0.9,
