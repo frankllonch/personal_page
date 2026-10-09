@@ -125,7 +125,7 @@ export default function Home() {
     // the two chained dynamic imports only start once the curtain is already
     // lifting, so the background showed up a few hundred ms late.
     void import("@/components/site-background");
-    void import("@/components/dunes-shader");
+    void import("@/components/background-shader");
 
     if (isIntroDone()) {
       setBackgroundReady(true);
@@ -158,10 +158,11 @@ export default function Home() {
         animate={{ y: barHidden ? "-100%" : "0%" }}
         initial={false}
         transition={{ duration: 0.35, ease: [0.25, 0.1, 0.25, 1] }}
+        // No bar: the signature and the links just sit over the page. They
+        // still slide away on scroll down and come back on scroll up.
         className="
           fixed top-0 inset-x-0 z-[200]
-          bg-white/55 backdrop-blur-md
-          border-b border-black/10
+          pointer-events-none
           will-change-transform
         "
       >
@@ -170,6 +171,7 @@ export default function Home() {
             max-w-7xl mx-auto px-6
             h-12 sm:h-14
             flex flex-row items-center justify-between gap-4
+            [&>*]:pointer-events-auto
           "
         >
           {/* TITLE */}
