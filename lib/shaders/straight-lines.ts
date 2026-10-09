@@ -27,20 +27,20 @@ export const straightLines = {
     /** Almost flat: this is the knob that makes them straight. */
     amplitude: 0.002,
     frequency: 2.6,
-    spread: 0.037,
+    spread: 0.042,
     horizon: 0.92,
     roughness: 0.75,
 
     speed: 0.18,
     parallax: 0.8,
-    scrollExpand: 1,
+    scrollExpand: 1.5,
 
     mouseParallax: 0.18,
     mouseSwell: 0.075,
     mouseRadius: 0.22,
     mouseEase: 0.08,
-    clickRipple: 0.05,
-    clickDuration: 3,
+    clickRipple: 0.07,
+    clickDuration: 1.6,
 
     colorSky: "#000000",
     colorFar: "#39507d",
