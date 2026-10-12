@@ -161,6 +161,11 @@ a:hover {
   opacity: 0.8;
 }
 
+/* The header links have one hover effect, the text scramble: no dimming. */
+header a:hover {
+  opacity: 1;
+}
+
 
 /* -------------------------------------------------------------------------- */
 /* 🃏 CARD / TILE BASE STYLE                                                  */

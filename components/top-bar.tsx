@@ -41,11 +41,9 @@ const SOCIALS = [
 export default function TopBar() {
   const pathname = usePathname();
   const onGallery = pathname === "/gallery" || pathname?.startsWith("/gallery/");
-  // The gallery is a white sheet with no shader: black type, no halo, and a
-  // quieter hover than the yellow, which has nothing to stand on there.
-  const ink = onGallery
-    ? "text-black group-hover:text-neutral-500"
-    : "on-shader text-white group-hover:text-[#F4D35E]";
+  // The gallery is a white sheet with no shader: black type, no halo. No
+  // hover colour anywhere — the scramble is the only hover effect up here.
+  const ink = onGallery ? "text-black" : "on-shader text-white";
 
   const [hidden, setHidden] = useState(false);
   const { scrollY } = useScroll();
@@ -89,11 +87,11 @@ export default function TopBar() {
       >
         <div className="flex items-center gap-4 sm:gap-6">
           {/* SIGNATURE — home */}
-          <Link href="/" aria-label="Home" className="group shrink-0">
+          <Link href="/" aria-label="Home" className="shrink-0">
             {/* Colour and weight on a div, as for the links below: the bare
                 <a> and <p> rules in globals.css would override them on the
                 anchor or the paragraph; `ink-inherit` passes them down. */}
-            <div className={`${ink} font-black tracking-tight transition-colors duration-300`}>
+            <div className={`${ink} font-black tracking-tight`}>
               <ScrambledText
                 className="ink-inherit text-2xl sm:text-3xl"
                 radius={30}
@@ -110,12 +108,14 @@ export default function TopBar() {
           <Link
             href={onGallery ? "/" : "/gallery"}
             aria-current={onGallery ? "page" : undefined}
-            className="group shrink-0"
+            className="shrink-0"
           >
             {/* A div, not the <a>: globals.css colours every bare <a> with the
                 accent, outside any layer, so a Tailwind colour on it loses. */}
-            <div className={`${ink} font-bold text-xs sm:text-sm tracking-wide transition-colors duration-300`}>
-              {onGallery ? "projects" : "gallery"}
+            <div className={`${ink} font-bold text-xs sm:text-sm tracking-wide`}>
+              <ScrambledText className="ink-inherit font-inherit" radius={20} duration={0.4} speed={0.5} scrambleChars="*">
+                {onGallery ? "projects" : "gallery"}
+              </ScrambledText>
             </div>
           </Link>
         </div>
@@ -144,10 +144,12 @@ export default function TopBar() {
             whileHover={TILE_HOVER}
             transition={TILE_SPRING}
             aria-label="Curriculum Vitae (PDF)"
-            className={`${TILE_CLASS} group`}
+            className={TILE_CLASS}
           >
-            <div className={`${ink} font-bold text-xs sm:text-sm tracking-wide transition-colors duration-300`}>
-              CV
+            <div className={`${ink} font-bold text-xs sm:text-sm tracking-wide`}>
+              <ScrambledText className="ink-inherit font-inherit" radius={20} duration={0.4} speed={0.5} scrambleChars="*">
+                CV
+              </ScrambledText>
             </div>
           </motion.a>
         </div>
