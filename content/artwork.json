@@ -23,15 +23,6 @@
   "artworks": [
     {
       "files": [
-        "IMG_0919.PNG"
-      ],
-      "title": "Complete the square 1",
-      "description": "Complete the square with my friend Bones. A minute each.",
-      "size": "",
-      "year": 2026
-    },
-    {
-      "files": [
         "Dream 14.mp4"
             ],
       "title": "Car guy saying hi",
@@ -141,9 +132,18 @@
     },
     {
       "files": [
+        "Dream 8.mp4"
+      ],
+      "title": "Horizon verd",
+      "description": "",
+      "size": "",
+      "year": 2026
+    },
+    {
+      "files": [
         "IMG_0929.PNG"
       ],
-      "title": "Untitled 12",
+      "title": "Josep",
       "description": "",
       "size": "",
       "year": 2026
@@ -172,6 +172,15 @@
       ],
       "title": "Untitled 14",
       "description": "",
+      "size": "",
+      "year": 2026
+    },
+    {
+      "files": [
+        "IMG_0919.PNG"
+      ],
+      "title": "Complete the square 1",
+      "description": "Complete the square with my friend Bones. A minute each.",
       "size": "",
       "year": 2026
     },
@@ -270,15 +279,6 @@
         "Dream 1.mp4"
       ],
       "title": "Untitled 25",
-      "description": "",
-      "size": "",
-      "year": 2026
-    },
-    {
-      "files": [
-        "Dream 8.mp4"
-      ],
-      "title": "Untitled 26",
       "description": "",
       "size": "",
       "year": 2026
