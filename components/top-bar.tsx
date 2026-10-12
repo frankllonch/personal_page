@@ -41,6 +41,11 @@ const SOCIALS = [
 export default function TopBar() {
   const pathname = usePathname();
   const onGallery = pathname === "/gallery" || pathname?.startsWith("/gallery/");
+  // The gallery is a white sheet with no shader: black type, no halo, and a
+  // quieter hover than the yellow, which has nothing to stand on there.
+  const ink = onGallery
+    ? "text-black group-hover:text-neutral-500"
+    : "on-shader text-white group-hover:text-[#F4D35E]";
 
   const [hidden, setHidden] = useState(false);
   const { scrollY } = useScroll();
@@ -88,7 +93,7 @@ export default function TopBar() {
             {/* Colour and weight on a div, as for the links below: the bare
                 <a> and <p> rules in globals.css would override them on the
                 anchor or the paragraph; `ink-inherit` passes them down. */}
-            <div className="on-shader text-white group-hover:text-[#F4D35E] font-black tracking-tight transition-colors duration-300">
+            <div className={`${ink} font-black tracking-tight transition-colors duration-300`}>
               <ScrambledText
                 className="ink-inherit text-2xl sm:text-3xl"
                 radius={30}
@@ -109,7 +114,7 @@ export default function TopBar() {
           >
             {/* A div, not the <a>: globals.css colours every bare <a> with the
                 accent, outside any layer, so a Tailwind colour on it loses. */}
-            <div className="on-shader text-white group-hover:text-[#F4D35E] font-bold text-xs sm:text-sm tracking-wide transition-colors duration-300">
+            <div className={`${ink} font-bold text-xs sm:text-sm tracking-wide transition-colors duration-300`}>
               {onGallery ? "projects" : "gallery"}
             </div>
           </Link>
@@ -127,7 +132,8 @@ export default function TopBar() {
               transition={TILE_SPRING}
               className={TILE_CLASS}
             >
-              <Image src={s.img} alt={s.alt} width={18} height={18} />
+              {/* The GitHub mark is white; on the gallery's white sheet it is inverted. */}
+              <Image src={s.img} alt={s.alt} width={18} height={18} className={onGallery && s.alt === "GitHub" ? "invert" : undefined} />
             </motion.a>
           ))}
 
@@ -140,7 +146,7 @@ export default function TopBar() {
             aria-label="Curriculum Vitae (PDF)"
             className={`${TILE_CLASS} group`}
           >
-            <div className="on-shader text-white group-hover:text-[#F4D35E] font-bold text-xs sm:text-sm tracking-wide transition-colors duration-300">
+            <div className={`${ink} font-bold text-xs sm:text-sm tracking-wide transition-colors duration-300`}>
               CV
             </div>
           </motion.a>
