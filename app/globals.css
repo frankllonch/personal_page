@@ -92,12 +92,31 @@
   --text-muted: #f2f2f0;      /* near-white: text sits straight on the shader */
 }
 
+/*
+ * The page colour goes on <html> ONLY, and <body> stays transparent.
+ *
+ * The shader background is a fixed element with a negative z-index mounted
+ * from the layout, i.e. a child of the root stacking context. Painting order
+ * puts negative-z children above the root (canvas) background but *below*
+ * the body's own background. When html has no background of its own, body's
+ * propagates to the canvas and the shader shows through; the moment html and
+ * body both set one, body's stops propagating, paints as a normal block, and
+ * covers the shader completely. That is exactly what happened when the
+ * background moved out of <main>: a page the colour of --bg and no shader.
+ */
+html {
+  background: var(--bg);
+}
+
 html,
 body {
-  background: var(--bg);
   color: var(--text);
   font-family: "Inter", sans-serif;
   overflow-x: hidden;
+}
+
+body {
+  background: transparent;
 }
 
 /* -------------------------------------------------------------------------- */

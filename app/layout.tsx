@@ -1,6 +1,8 @@
 import type { Metadata } from "next";
 import "./globals.css";
 import Loader from "@/components/loader";
+import BackgroundMount from "@/components/background-mount";
+import TopBar from "@/components/top-bar";
 
 export const metadata: Metadata = {
   title: "Frank Llonch - Mathematical Engineer",
@@ -25,6 +27,9 @@ export default function RootLayout({
       </head>
       <body>
         <Loader />
+        {/* Shared by every page: the shader behind, the signature and links above. */}
+        <BackgroundMount />
+        <TopBar />
         {children}
       </body>
     </html>
