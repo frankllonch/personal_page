@@ -75,7 +75,19 @@ const str = (v: unknown) => (typeof v === "string" ? v.trim() : "");
 
 /* ------------------------------------------------------------- images */
 
-async function imageMedia(name: string): Promise<Media> {
+/**
+ * `scripts/build-artwork.mjs` writes a `<name>.opt.webp` beside any image that
+ * is too large to serve from directly. When it exists it is what the page
+ * uses; the JSON goes on naming the original, so adding work stays simple.
+ */
+async function servedName(name: string): Promise<string> {
+  if (/\.opt\.webp$/i.test(name)) return name;
+  const twin = name.replace(/\.[^.]+$/, "") + ".opt.webp";
+  return stat(path.join(IMAGE_DIR, twin)).then(() => twin, () => name);
+}
+
+async function imageMedia(original: string): Promise<Media> {
+  const name = await servedName(original);
   const meta = await sharp(path.join(IMAGE_DIR, name)).metadata();
   // A phone photo of a painting often carries its rotation in EXIF rather than
   // in the pixels. Browsers honour it when drawing, so the aspect the grid

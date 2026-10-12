@@ -37,7 +37,7 @@ export const DENSITIES = [
   { unit: 200, label: "Medium" },
   { unit: 130, label: "Small" },
 ] as const;
-export const DEFAULT_DENSITY = 1;
+export const DEFAULT_DENSITY = 2;
 
 const KINDS = [
   { key: "all", label: "All" },
@@ -51,8 +51,8 @@ const FADE = 420;
 /** Must match `.gal-lightbox`'s opacity transition in gallery.css. */
 const CLOSE = 620;
 const SWIPE = 48;
-/** Leading tiles to load eagerly — the first screen or so. */
-const EAGER = 8;
+/** Leading tiles to load eagerly — the first screen or so at the default density. */
+const EAGER = 12;
 /* Justified tiles can be most of a row wide, so err on the large side. */
 const TILE_SIZES = "(max-width: 599px) 100vw, (max-width: 1199px) 50vw, 33vw";
 const PLATE_SIZES = "(max-width: 900px) 92vw, 60vw";
@@ -75,7 +75,7 @@ export default function Gallery({ items }: { items: readonly Artwork[] }) {
   const gridRef = useRef<HTMLDivElement>(null);
   const cursorRef = useRef<HTMLDivElement>(null);
   const labelRef = useRef<HTMLDivElement>(null);
-  const nextRef = useRef<HTMLButtonElement>(null);
+  const boxRef = useRef<HTMLDivElement>(null);
 
   const [density, setDensity] = useState(DEFAULT_DENSITY);
   const [kind, setKind] = useState<KindFilter>("all");
@@ -256,7 +256,9 @@ export default function Gallery({ items }: { items: readonly Artwork[] }) {
     // Opened on the next frame so the fade has a value to start from.
     requestAnimationFrame(() => { if (shownRef.current) setIsOpen(true); });
     history.pushState(withRouterState({ gal: true }), "", hashFor(i));
-    requestAnimationFrame(() => nextRef.current?.focus({ preventScroll: true }));
+    // Focus the dialog itself, not an arrow: a focused button draws a ring,
+    // which read as the arrow being highlighted for no reason.
+    requestAnimationFrame(() => boxRef.current?.focus({ preventScroll: true }));
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [firstOf, show]);
 
@@ -403,6 +405,8 @@ export default function Gallery({ items }: { items: readonly Artwork[] }) {
 
       {mounted && pos && art && media && (
         <div
+          ref={boxRef}
+          tabIndex={-1}
           className={`gal-lightbox${isOpen ? " is-open" : ""}${changing ? " is-changing" : ""}`}
           role="dialog"
           aria-modal="true"
@@ -470,7 +474,7 @@ export default function Gallery({ items }: { items: readonly Artwork[] }) {
             </div>
           </div>
 
-          <button ref={nextRef} type="button" className="gal-lightbox-nav gal-lightbox-next" aria-label="Next" onClick={() => show(target.current + 1, true)}>→</button>
+          <button type="button" className="gal-lightbox-nav gal-lightbox-next" aria-label="Next" onClick={() => show(target.current + 1, true)}>→</button>
         </div>
       )}
     </div>

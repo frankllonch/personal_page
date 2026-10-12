@@ -135,9 +135,22 @@
   color: var(--gal-ink);
 }
 
-.gal-control:focus-visible {
+/* Focus rings only for the keyboard. A click leaves the button focused, and
+   the default ring then sits on it until something else is clicked — on the
+   lightbox arrows that read as a highlight. */
+.gal button:focus:not(:focus-visible),
+.gal-lightbox:focus {
+  outline: none;
+}
+
+.gal button:focus-visible {
   outline: 1px solid var(--gal-ink);
   outline-offset: 3px;
+}
+
+.gal button,
+.gal-tile {
+  -webkit-tap-highlight-color: transparent;
 }
 
 /* ---------------------------------------------------------------- cursor */
