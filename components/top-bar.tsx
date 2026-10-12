@@ -84,20 +84,21 @@ export default function TopBar() {
       >
         <div className="flex items-center gap-4 sm:gap-6">
           {/* SIGNATURE — home */}
-          <Link
-            href="/"
-            aria-label="Home"
-            className="on-shader font-inter font-black tracking-tight hover:text-[#F4D35E] transition-colors duration-300 shrink-0"
-          >
-            <ScrambledText
-              className="scrambled-text-demo text-2xl sm:text-3xl"
-              radius={30}
-              duration={0.4}
-              speed={0.5}
-              scrambleChars="*"
-            >
-              frank
-            </ScrambledText>
+          <Link href="/" aria-label="Home" className="group shrink-0">
+            {/* Colour and weight on a div, as for the links below: the bare
+                <a> and <p> rules in globals.css would override them on the
+                anchor or the paragraph; `ink-inherit` passes them down. */}
+            <div className="on-shader text-white group-hover:text-[#F4D35E] font-black tracking-tight transition-colors duration-300">
+              <ScrambledText
+                className="ink-inherit text-2xl sm:text-3xl"
+                radius={30}
+                duration={0.4}
+                speed={0.5}
+                scrambleChars="*"
+              >
+                frank
+              </ScrambledText>
+            </div>
           </Link>
 
           {/* GALLERY ⇄ PROJECTS */}

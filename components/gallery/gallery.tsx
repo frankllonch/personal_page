@@ -20,8 +20,8 @@ import "./gallery.css";
  *
  * The original's opening pile, year rail and to-scale switch are deliberately
  * not here: this gallery starts laid out. Everything is an enhancement — the
- * tiles are real links, and the grid is complete and readable with scripting
- * off.
+ * tiles are real links to `#slug`, which opens the work on arrival, and the
+ * grid is complete and readable with scripting off.
  */
 
 /* ------------------------------------------------------------- tunables */
@@ -53,9 +53,25 @@ const CLOSE = 620;
 const SWIPE = 48;
 /** Leading tiles to load eagerly — the first screen or so at the default density. */
 const EAGER = 12;
-/* Justified tiles can be most of a row wide, so err on the large side. */
-const TILE_SIZES = "(max-width: 599px) 100vw, (max-width: 1199px) 50vw, 33vw";
+/**
+ * The most a justified row grows past its tiles' starting size. A row only
+ * wraps when the next tile would not fit, so the slack it spreads is at most
+ * one tile wide; simulated across the densities and widths, rows stay under
+ * this at every desktop size.
+ */
+const ROW_GROWTH = 1.75;
 const PLATE_SIZES = "(max-width: 900px) 92vw, 60vw";
+/** What can take focus inside the lightbox, for the Tab trap. */
+const FOCUSABLE = 'button:not([disabled]), [href], video[controls], [tabindex]:not([tabindex="-1"])';
+
+/**
+ * The width to tell the browser a tile will be: its starting size at the
+ * current density, times the most a row grows. A fixed `33vw` asked for a
+ * 1920px cut of every 200px tile at Small on a 2x screen. On a phone every row
+ * holds one tile, so there it is the viewport.
+ */
+const tileSizes = (aspect: number, unit: number) =>
+  `(max-width: 599px) 100vw, ${Math.round(aspect * unit * ROW_GROWTH)}px`;
 
 const isPlainClick = (e: React.MouseEvent) =>
   !e.metaKey && !e.ctrlKey && !e.shiftKey && !e.altKey && e.button === 0;
@@ -64,6 +80,31 @@ const isPlainClick = (e: React.MouseEvent) =>
 // what autoplay policies check; set it on the node itself.
 const mute = (el: HTMLVideoElement | null) => {
   if (el) { el.muted = true; el.defaultMuted = true; }
+};
+
+/** `#slug` or `#slug:n` — the URL a work is open at — as a work and a file. */
+const parseHash = (): { slug: string; fi: number } | null => {
+  const m = /^#([a-z0-9-]+)(?::(\d+))?$/.exec(location.hash);
+  return m ? { slug: m[1]!, fi: m[2] ? Math.max(0, Number(m[2]) - 1) : 0 } : null;
+};
+
+/**
+ * Every history write goes through here. WebKit throws past 100 writes in
+ * 30 s (Chrome silently drops them); a lost hash is harmless, the next settled
+ * step rewrites it, but a throw mid-step would leave the lightbox half moved.
+ *
+ * The state is a plain object on purpose. Next patches push/replaceState: an
+ * entry without its own markers gets them copied in and the router's URL is
+ * synced to ours, whereas an entry that already carries them is written as
+ * is — and the router, still believing the page sits at /gallery, would put
+ * that URL back the next time anything (a link prefetch, say) updates it.
+ */
+const writeHistory = (method: "pushState" | "replaceState", state: object, url: string) => {
+  try {
+    history[method](state, "", url);
+  } catch {
+    /* throttled */
+  }
 };
 
 /* ------------------------------------------------------------ component */
@@ -80,6 +121,8 @@ export default function Gallery({ items }: { items: readonly Artwork[] }) {
   const [density, setDensity] = useState(DEFAULT_DENSITY);
   const [kind, setKind] = useState<KindFilter>("all");
   const [hasCursor, setHasCursor] = useState(false);
+  /** Whether the grid's animations run. Off when the system asks for less motion, and a button either way. */
+  const [motion, setMotion] = useState(true);
 
   /** The works the filter lets through, in order. Everything below indexes into this. */
   const visible = useMemo(
@@ -92,6 +135,7 @@ export default function Gallery({ items }: { items: readonly Artwork[] }) {
     [visible],
   );
   const firstOf = useCallback((ai: number) => seq.findIndex((p) => p.ai === ai), [seq]);
+  const hasVideoTiles = visible.some((a) => a.cover.kind === "video");
 
   /* lightbox state: `shown` is what the plate draws, and lags `target` by one fade */
   const [mounted, setMounted] = useState(false);
@@ -102,10 +146,15 @@ export default function Gallery({ items }: { items: readonly Artwork[] }) {
   const ticket = useRef(0);
   const pending = useRef(0);
   const teardown = useRef(0);
-  const openedAt = useRef("");
   const shownRef = useRef(false);
+  /** The tile to hand focus back to once the grid is live again. */
+  const restoreTo = useRef("");
 
   const unit = DENSITIES[density]!.unit;
+
+  useEffect(() => {
+    setMotion(!window.matchMedia("(prefers-reduced-motion: reduce)").matches);
+  }, []);
 
   /* ------------------------------------------------- video tiles */
 
@@ -118,17 +167,18 @@ export default function Gallery({ items }: { items: readonly Artwork[] }) {
     if (!root) return;
     const videos = [...root.querySelectorAll<HTMLVideoElement>(".gal-tile video")];
     if (!videos.length) return;
-    if (mounted) {
+    if (mounted || !motion) {
       for (const v of videos) v.pause();
       return;
     }
-    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return; // first frame only
 
     const io = new IntersectionObserver(
       (entries) => {
         for (const e of entries) {
           const v = e.target as HTMLVideoElement;
-          if (e.isIntersecting && e.intersectionRatio > 0.2) void v.play().catch(() => undefined);
+          // Mirrors the threshold the observer fires on: leaving, the crossing
+          // reports a ratio just under it; arriving, just over.
+          if (e.isIntersecting && e.intersectionRatio >= 0.25) void v.play().catch(() => undefined);
           else v.pause();
         }
       },
@@ -136,7 +186,7 @@ export default function Gallery({ items }: { items: readonly Artwork[] }) {
     );
     for (const v of videos) io.observe(v);
     return () => io.disconnect();
-  }, [visible, mounted]);
+  }, [visible, mounted, motion]);
 
   /* ----------------------------------------------------------- cursor */
 
@@ -204,10 +254,6 @@ export default function Gallery({ items }: { items: readonly Artwork[] }) {
 
   /* --------------------------------------------------------- lightbox */
 
-  // Next's router reloads the page on a popstate whose state it does not
-  // recognise, so every entry written here carries the router's own state.
-  const withRouterState = (extra: object) => ({ ...(window.history.state ?? {}), ...extra });
-
   const hashFor = (i: number) => {
     const p = seq[i];
     if (!p) return "";
@@ -220,47 +266,53 @@ export default function Gallery({ items }: { items: readonly Artwork[] }) {
     const wrapped = ((index % seq.length) + seq.length) % seq.length;
     if (wrapped === target.current && animate) return;
     target.current = wrapped;
-    history.replaceState(withRouterState({ gal: true }), "", hashFor(wrapped));
 
     const mine = ++ticket.current;
     const reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-    if (!animate || reduce) {
+    // The URL is written once a step has settled, not once per keypress: a
+    // held arrow key repeats at ~30 Hz, well past what WebKit allows.
+    const settle = () => {
       setShown(wrapped);
       setChanging(false);
-      return;
-    }
+      const hash = hashFor(wrapped);
+      if (location.hash !== hash) writeHistory("replaceState", { gal: true }, hash);
+    };
+    if (!animate || reduce) { settle(); return; }
     // One transition per action, and only one in flight: a newer navigation
     // takes a new ticket and this one lapses instead of racing it.
     setChanging(true);
     window.clearTimeout(pending.current);
-    pending.current = window.setTimeout(() => {
-      if (mine !== ticket.current) return;
-      setShown(wrapped);
-      setChanging(false);
-    }, FADE);
+    pending.current = window.setTimeout(() => { if (mine === ticket.current) settle(); }, FADE);
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [seq, visible]);
 
-  const open = useCallback((ai: number) => {
+  /**
+   * Open a work at one of its files. `push` adds the lightbox's own history
+   * entry, so Back closes it; it is false only when the entry already exists,
+   * i.e. when Forward brought it back.
+   */
+  const open = useCallback((ai: number, fi = 0, push = true) => {
     const i = firstOf(ai);
     if (i < 0) return;
+    const at = i + Math.min(Math.max(fi, 0), visible[ai]!.media.length - 1);
     // A close still counting down belongs to the work that was on screen
     // before this one, and would otherwise empty the plate under it.
     window.clearTimeout(teardown.current);
     shownRef.current = true;
-    openedAt.current = location.pathname + location.search;
     setMounted(true);
-    document.body.classList.add("gal-locked");
+    document.documentElement.classList.add("gal-locked");
     target.current = -1;
-    show(i, false);
+    // The entry goes in before the hash is written, so it is the lightbox's
+    // own entry that carries the work and the one beneath stays as it was.
+    if (push) writeHistory("pushState", { gal: true }, hashFor(at));
+    show(at, false);
     // Opened on the next frame so the fade has a value to start from.
     requestAnimationFrame(() => { if (shownRef.current) setIsOpen(true); });
-    history.pushState(withRouterState({ gal: true }), "", hashFor(i));
     // Focus the dialog itself, not an arrow: a focused button draws a ring,
     // which read as the arrow being highlighted for no reason.
     requestAnimationFrame(() => boxRef.current?.focus({ preventScroll: true }));
   // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [firstOf, show]);
+  }, [firstOf, show, visible]);
 
   const close = useCallback((restore: boolean) => {
     if (!shownRef.current) return;
@@ -270,40 +322,97 @@ export default function Gallery({ items }: { items: readonly Artwork[] }) {
     window.clearTimeout(teardown.current);
     setIsOpen(false);
     setChanging(false);
-    document.body.classList.remove("gal-locked");
+    document.documentElement.classList.remove("gal-locked");
     // Held until the fade has finished, or the painting vanishes mid-close.
     teardown.current = window.setTimeout(() => setMounted(false), CLOSE);
-    if (restore && openedAt.current) history.replaceState(withRouterState({}), "", openedAt.current);
+    // Escape and Close leave history as they found it: the lightbox's entry
+    // goes, and the popstate that follows finds nothing open and does nothing.
+    if (restore) history.back();
+    // The grid is inert until the dialog has gone; focus returns to the tile
+    // once it is live again (the effect on `isOpen` below).
     const p = seq[target.current];
-    const slug = p ? visible[p.ai]?.slug : undefined;
-    if (slug) gridRef.current?.querySelector<HTMLElement>(`[data-slug="${CSS.escape(slug)}"]`)?.focus({ preventScroll: true });
+    restoreTo.current = (p && visible[p.ai]?.slug) ?? "";
   }, [seq, visible]);
 
   useEffect(() => {
+    if (isOpen || !restoreTo.current) return;
+    const slug = restoreTo.current;
+    restoreTo.current = "";
+    gridRef.current?.querySelector<HTMLElement>(`[data-slug="${CSS.escape(slug)}"]`)?.focus({ preventScroll: true });
+  }, [isOpen]);
+
+  useEffect(() => {
+    // The dialog is modal: Tab cycles inside it. The grid and controls under
+    // the veil are `inert` as well, but the top bar sits above the lightbox
+    // and only this keeps the keyboard off it while a work is open.
+    const trapTab = (e: KeyboardEvent) => {
+      const box = boxRef.current;
+      if (!box) return;
+      const focusable = [...box.querySelectorAll<HTMLElement>(FOCUSABLE)]
+        .filter((el) => el.getClientRects().length > 0);
+      if (!focusable.length) { e.preventDefault(); return; }
+      const first = focusable[0]!, last = focusable[focusable.length - 1]!;
+      const active = document.activeElement;
+      const inside = active instanceof HTMLElement && active !== box && box.contains(active);
+      if (e.shiftKey ? !inside || active === first : !inside || active === last) {
+        e.preventDefault();
+        (e.shiftKey ? last : first).focus();
+      }
+    };
     const onKey = (e: KeyboardEvent) => {
       if (!shownRef.current) return;
-      if (e.key === "Escape") close(true);
-      else if (e.key === "ArrowLeft") show(target.current - 1, true);
+      if (e.key === "Escape") { close(true); return; }
+      if (e.key === "Tab") { trapTab(e); return; }
+      // A focused <video controls> owns the arrows — they seek — not the gallery.
+      if (e.target instanceof HTMLVideoElement) return;
+      if (e.key === "ArrowLeft") show(target.current - 1, true);
       else if (e.key === "ArrowRight") show(target.current + 1, true);
     };
-    const onPop = () => { if (shownRef.current) close(false); };
+    const onPop = () => {
+      if (shownRef.current) { close(false); return; }
+      // Forward, back onto a work's entry: reopen it without adding another.
+      const h = parseHash();
+      const ai = h ? visible.findIndex((a) => a.slug === h.slug) : -1;
+      if (ai >= 0) open(ai, h!.fi, false);
+    };
     document.addEventListener("keydown", onKey);
     window.addEventListener("popstate", onPop);
     return () => {
       document.removeEventListener("keydown", onKey);
       window.removeEventListener("popstate", onPop);
-      window.clearTimeout(pending.current);
-      window.clearTimeout(teardown.current);
-      document.body.classList.remove("gal-locked");
     };
-  }, [close, show]);
+  }, [close, show, open, visible]);
 
-  // Swipe between files on touch.
-  const touch = useRef({ x: 0, y: 0 });
+  // Unmount only: a close still counting down must not outlive the page, and
+  // the lock must not either. (Kept apart from the listeners above, whose
+  // effect re-runs on every filter change.)
+  useEffect(() => () => {
+    window.clearTimeout(pending.current);
+    window.clearTimeout(teardown.current);
+    document.documentElement.classList.remove("gal-locked");
+  }, []);
+
+  // Arriving with a work in the URL — the tiles' own links, or a shared one —
+  // opens it. The hash is first cleared off the entry we arrived on, so that
+  // this open is like any other: its own entry on top, Back to close.
+  useEffect(() => {
+    const h = parseHash();
+    const ai = h ? visible.findIndex((a) => a.slug === h.slug) : -1;
+    if (ai < 0) return;
+    writeHistory("replaceState", {}, location.pathname + location.search);
+    open(ai, h!.fi);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  // Swipe between files on touch — unless the drag began on the plate's
+  // video, where it is a scrub on its native controls.
+  const touch = useRef({ x: 0, y: 0, onVideo: false });
   const onTouchStart = (e: React.TouchEvent) => {
-    touch.current = { x: e.changedTouches[0]!.clientX, y: e.changedTouches[0]!.clientY };
+    const t = e.changedTouches[0]!;
+    touch.current = { x: t.clientX, y: t.clientY, onVideo: e.target instanceof HTMLVideoElement };
   };
   const onTouchEnd = (e: React.TouchEvent) => {
+    if (touch.current.onVideo) return;
     const dx = e.changedTouches[0]!.clientX - touch.current.x;
     const dy = e.changedTouches[0]!.clientY - touch.current.y;
     if (Math.abs(dx) > SWIPE && Math.abs(dx) > Math.abs(dy)) show(target.current + (dx < 0 ? 1 : -1), true);
@@ -332,7 +441,7 @@ export default function Gallery({ items }: { items: readonly Artwork[] }) {
     <div ref={rootRef} className={`gal${hasCursor ? " has-cursor" : ""}`}>
       <h1 className="sr-only">Gallery</h1>
 
-      <div className="gal-controls">
+      <div className="gal-controls" inert={isOpen}>
         <div className="gal-control-group" role="group" aria-label="Grid size">
           {DENSITIES.map((d, i) => (
             <button
@@ -359,6 +468,14 @@ export default function Gallery({ items }: { items: readonly Artwork[] }) {
             </button>
           ))}
         </div>
+        {/* Looping video with no way to stop it fails anyone it distracts. */}
+        {hasVideoTiles && (
+          <div className="gal-control-group gal-control-group-end">
+            <button type="button" className="gal-control" onClick={() => setMotion((m) => !m)}>
+              {motion ? "Pause animations" : "Play animations"}
+            </button>
+          </div>
+        )}
       </div>
 
       {visible.length === 0 ? (
@@ -369,28 +486,33 @@ export default function Gallery({ items }: { items: readonly Artwork[] }) {
         <div
           ref={gridRef}
           className="gal-grid"
+          inert={isOpen}
           style={{ "--gal-unit": `${unit}px` } as React.CSSProperties}
         >
-          {visible.map((a, i) => (
-            <a
-              key={a.slug}
-              className="gal-tile"
-              href={`#${a.slug}`}
-              style={{ "--a": (a.cover.width / a.cover.height).toFixed(4) } as React.CSSProperties}
-              data-title={a.title}
-              data-year={a.year ?? ""}
-              data-slug={a.slug}
-              aria-label={`${a.title}${a.year ? `, ${a.year}` : ""}${a.type === "animation" ? " (animation)" : ""}${a.media.length > 1 ? `, ${a.media.length} files` : ""}`}
-              onClick={(e) => {
-                // Modified clicks mean "open this elsewhere": leave them to the browser.
-                if (!isPlainClick(e)) return;
-                e.preventDefault();
-                open(i);
-              }}
-            >
-              <TileMedia media={a.cover} alt={a.title} eager={i < EAGER} />
-            </a>
-          ))}
+          {visible.map((a, i) => {
+            const aspect = a.cover.width / a.cover.height;
+            return (
+              <a
+                key={a.slug}
+                id={a.slug}
+                className="gal-tile"
+                href={`#${a.slug}`}
+                style={{ "--a": aspect.toFixed(4) } as React.CSSProperties}
+                data-title={a.title}
+                data-year={a.year ?? ""}
+                data-slug={a.slug}
+                aria-label={`${a.title}${a.year ? `, ${a.year}` : ""}${a.type === "animation" ? " (animation)" : ""}${a.media.length > 1 ? `, ${a.media.length} files` : ""}`}
+                onClick={(e) => {
+                  // Modified clicks mean "open this elsewhere": leave them to the browser.
+                  if (!isPlainClick(e)) return;
+                  e.preventDefault();
+                  open(i);
+                }}
+              >
+                <TileMedia media={a.cover} alt={a.title} eager={i < EAGER} sizes={tileSizes(aspect, unit)} />
+              </a>
+            );
+          })}
           {/* Soaks up the last row's free space, so two stragglers do not grow to
               fill a line meant for four. */}
           <div className="gal-grid-tail" aria-hidden="true" />
@@ -463,7 +585,8 @@ export default function Gallery({ items }: { items: readonly Artwork[] }) {
                   >
                     {m.kind === "image"
                       ? <Image src={m.src} alt="" width={m.width} height={m.height} sizes="48px" />
-                      : <video src={m.src} muted playsInline preload="metadata" ref={mute} />}
+                      // `#t=` makes WebKit paint a first frame it would otherwise leave black.
+                      : <video src={`${m.src}#t=0.001`} muted playsInline preload="metadata" ref={mute} />}
                   </button>
                 ))}
               </div>
@@ -474,6 +597,12 @@ export default function Gallery({ items }: { items: readonly Artwork[] }) {
             </div>
           </div>
 
+          {/* Spoken when the work changes; outside the caption so the fade does not swallow it. */}
+          <div className="sr-only" role="status" aria-live="polite" aria-atomic="true">
+            {art.title}{art.year ? `, ${art.year}` : ""}, {pos.ai + 1} of {visible.length}
+            {art.media.length > 1 ? `, file ${pos.fi + 1} of ${art.media.length}` : ""}
+          </div>
+
           <button type="button" className="gal-lightbox-nav gal-lightbox-next" aria-label="Next" onClick={() => show(target.current + 1, true)}>→</button>
         </div>
       )}
@@ -482,7 +611,7 @@ export default function Gallery({ items }: { items: readonly Artwork[] }) {
 }
 
 /** A work's cover in the grid: a still, or a looping muted video. */
-function TileMedia({ media, alt, eager }: { media: Media; alt: string; eager: boolean }) {
+function TileMedia({ media, alt, eager, sizes }: { media: Media; alt: string; eager: boolean; sizes: string }) {
   if (media.kind === "image") {
     return (
       <Image
@@ -490,21 +619,23 @@ function TileMedia({ media, alt, eager }: { media: Media; alt: string; eager: bo
         alt={alt}
         width={media.width}
         height={media.height}
-        sizes={TILE_SIZES}
+        sizes={sizes}
         priority={eager}
         draggable={false}
       />
     );
   }
+  // The tile's <a> already names the work; `#t=` gets WebKit to paint a first
+  // frame even when the loop never starts (motion off).
   return (
     <video
-      src={media.src}
+      src={`${media.src}#t=0.001`}
       width={media.width}
       height={media.height}
       loop
       playsInline
       preload="metadata"
-      aria-label={alt}
+      aria-hidden="true"
       ref={mute}
     />
   );

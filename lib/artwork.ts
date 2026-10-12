@@ -73,6 +73,10 @@ const slugify = (file: string) =>
 
 const str = (v: unknown) => (typeof v === "string" ? v.trim() : "");
 
+/** The URL a file in public/artwork is served at. Encoded: a `#`, `?` or `%`
+    in a filename would otherwise be read as part of the URL, not the name. */
+const publicUrl = (name: string) => `/artwork/${encodeURIComponent(name)}`;
+
 /* ------------------------------------------------------------- images */
 
 /**
@@ -82,7 +86,8 @@ const str = (v: unknown) => (typeof v === "string" ? v.trim() : "");
  */
 async function servedName(name: string): Promise<string> {
   if (/\.opt\.webp$/i.test(name)) return name;
-  const twin = name.replace(/\.[^.]+$/, "") + ".opt.webp";
+  // Named after the whole filename, so `a.jpg` and `a.png` keep separate twins.
+  const twin = name + ".opt.webp";
   return stat(path.join(IMAGE_DIR, twin)).then(() => twin, () => name);
 }
 
@@ -97,7 +102,7 @@ async function imageMedia(original: string): Promise<Media> {
   const width = rotated ? meta.height : meta.width;
   const height = rotated ? meta.width : meta.height;
   if (!width || !height) throw new Error("could not read its dimensions");
-  return { kind: "image", src: `/artwork/${name}`, width, height };
+  return { kind: "image", src: publicUrl(name), width, height };
 }
 
 /* ------------------------------------------------------------- videos */
@@ -202,7 +207,7 @@ async function videoMedia(name: string, label: string): Promise<Media> {
     );
     dims = { width: 16, height: 9 };
   }
-  return { kind: "video", src: `/artwork/${name}`, ...dims };
+  return { kind: "video", src: publicUrl(name), ...dims };
 }
 
 /* --------------------------------------------------------------- load */

@@ -14,7 +14,9 @@
   --gal-ease: cubic-bezier(0.22, 1, 0.36, 1);
   --gal-hover: 0.55s;                 /* one duration for every hover */
   --gal-ink: #ffffff;
-  --gal-ink-soft: rgba(255, 255, 255, 0.58);
+  /* Soft ink still has to read over the shader's crests and over the veil;
+     measured, anything fainter than this fell under 4.5:1 there. */
+  --gal-ink-soft: rgba(255, 255, 255, 0.72);
 
   position: relative;
   z-index: 10;
@@ -115,6 +117,10 @@
 .gal-control-group {
   display: flex;
   gap: 1.3rem;
+}
+
+.gal-control-group-end {
+  margin-left: auto;
 }
 
 .gal-control {
@@ -219,6 +225,9 @@
   gap: var(--gal-pad);
   padding: 4rem var(--gal-pad) var(--gal-pad);
   color: var(--gal-ink);
+  /* The veil is a tint, not a wall: bright parts of a work or the shader
+     still come through it, and the halo keeps the small type legible there. */
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.55);
   /* `pointer-events` goes with the opacity: a fading lightbox still fills the
      screen, and while it fades it would take every click meant for the sheet. */
   opacity: 0;
@@ -245,7 +254,7 @@
 .gal-lightbox-veil {
   position: fixed;
   inset: 0;
-  background: rgba(8, 8, 10, 0.55);
+  background: rgba(8, 8, 10, 0.68);
 }
 
 /* The veil is positioned, so anything meant to sit in front must be too. */
@@ -362,10 +371,11 @@
 /*
  * The reference keeps an empty column on the left to mirror the caption on
  * the right, which looks right on a wide screen and leaves a laptop with a
- * picture a few hundred pixels across. Below that width the spacer goes and
- * the picture takes its room.
+ * picture a few hundred pixels across — measured, ~400px at 1280 and ~540px
+ * at 1440, less than the 1199px layout gets. So the spacer only exists from
+ * 1500px up; below that the picture takes its room.
  */
-@media (max-width: 1199px) {
+@media (max-width: 1499px) {
   .gal-lightbox {
     grid-template-columns: auto 1fr var(--caption) auto;
   }
@@ -380,41 +390,68 @@
   }
 }
 
+/* Narrow: the picture, the caption under it, and the arrows either side of
+   the caption — a swipe is a shortcut, never the only way between works. */
 @media (max-width: 899px) {
   .gal-lightbox {
-    grid-template-columns: 1fr;
+    grid-template-columns: auto 1fr auto;
     grid-template-rows: 1fr auto;
     align-content: center;
   }
   .gal-lightbox-plate {
-    grid-column: 1;
+    grid-column: 1 / -1;
     grid-row: 1;
   }
   .gal-lightbox-caption {
+    grid-column: 2;
+    grid-row: 2;
+  }
+  .gal-lightbox-prev {
     grid-column: 1;
     grid-row: 2;
   }
+  .gal-lightbox-next {
+    grid-column: 3;
+    grid-row: 2;
+  }
   .gal-lightbox-nav {
-    display: none;
+    align-self: start;
+    height: auto;
+    min-width: 44px;
+    min-height: 44px;
   }
   .gal-lightbox-plate img {
     max-height: 58vh;
   }
 }
 
-/* The page behind an open lightbox must not scroll, and goes soft as a whole. */
-body.gal-locked {
+/*
+ * The page behind an open lightbox must not scroll, and goes soft as a whole.
+ *
+ * The lock goes on <html>: globals.css gives html and body `overflow-x:
+ * hidden`, and once html's overflow is anything but visible it is html, not
+ * body, whose overflow the viewport takes — a lock on body never reached it.
+ */
+html.gal-locked {
   overflow: hidden;
 }
 
-body.gal-locked .gal-grid,
-body.gal-locked .gal-controls,
-body.gal-locked .intro-bg-fade {
+html.gal-locked .gal-grid,
+html.gal-locked .gal-controls,
+html.gal-locked .intro-bg-fade {
   filter: blur(10px);
 }
 
+/* A blur samples past the element's edge as if it were empty, so the outer
+   ~25px of the viewport-sized shader would fade to the page colour. Pushing
+   the edges off-screen while it is blurred keeps the soft background whole —
+   and reads as the sheet dropping back behind the work. */
+html.gal-locked .intro-bg-fade {
+  transform: scale(1.1);
+}
+
 .intro-bg-fade {
-  transition: filter 0.6s var(--gal-ease);
+  transition: filter 0.6s var(--gal-ease), transform 0.6s var(--gal-ease);
 }
 
 /* ------------------------------------------------------------- empty */
@@ -469,7 +506,8 @@ body.gal-locked .intro-bg-fade {
   transition: opacity 0.3s var(--gal-ease), border-color 0.3s var(--gal-ease);
 }
 
-.gal-lightbox-thumb img {
+.gal-lightbox-thumb img,
+.gal-lightbox-thumb video {
   display: block;
   width: 100%;
   height: 100%;
@@ -480,15 +518,6 @@ body.gal-locked .intro-bg-fade {
 .gal-lightbox-thumb:hover {
   opacity: 1;
   border-color: rgba(255, 255, 255, 0.6);
-}
-
-/* A span, so it is styled here explicitly rather than by globals.css. */
-.gal-lightbox-thumb-video {
-  font-size: 11px;
-  font-weight: 600;
-  letter-spacing: 0;
-  line-height: 1;
-  color: var(--gal-ink);
 }
 
 .gal-empty code {

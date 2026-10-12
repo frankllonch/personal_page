@@ -30,3 +30,10 @@
     line-height: inherit; /* optional, smoother scaling */
   }
 
+/* Opt-in: the paragraph takes its colour and weight from the wrapper too,
+   instead of the bare `p` rule in globals.css. (0,1,1) unlayered, so it wins. */
+.text-block.ink-inherit p {
+  font-weight: inherit;
+  color: inherit;
+}
+

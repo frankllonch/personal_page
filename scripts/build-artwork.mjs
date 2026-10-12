@@ -30,7 +30,7 @@ const names = (await readdir(DIR)).filter((n) => IMAGE.test(n) && !/\.opt\.webp$
 let made = 0, kept = 0, before = 0, after = 0;
 for (const name of names) {
   const src = path.join(DIR, name);
-  const out = path.join(DIR, name.replace(/\.[^.]+$/, '') + '.opt.webp');
+  const out = path.join(DIR, name + '.opt.webp');   // after the whole name: a.jpg and a.png stay apart
   const s = await stat(src);
   const meta = await sharp(src).metadata();
   const edge = Math.max(meta.width ?? 0, meta.height ?? 0);
