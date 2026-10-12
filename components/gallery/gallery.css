@@ -27,8 +27,10 @@ html:has(.gal) body {
   --gal-ink: #000000;
   --gal-ink-soft: rgba(0, 0, 0, 0.55);
 
+  /* No z-index here on purpose: it would make .gal a stacking context, and
+     the pointer label's `difference` blend would then only see what is
+     inside it — the works, not the white page — and vanish off their edges. */
   position: relative;
-  z-index: 10;
   color: var(--gal-ink);
 }
 
