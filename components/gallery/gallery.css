@@ -88,11 +88,12 @@ html:has(.gal) body {
 }
 
 /* A video tile is laid out from the size read out of the file, like an image;
-   the frames fill that box. */
+   the frames fill that box. No fill colour behind them: Safari can leave a
+   sub-pixel seam along one edge of a covered video, and a black backing
+   showed through it as a bar on the right of every animation. */
 .gal-tile video {
   aspect-ratio: var(--a);
   object-fit: cover;
-  background: #000;
 }
 
 /*
@@ -488,7 +489,6 @@ html.gal-locked .intro-bg-fade {
   max-width: 100%;
   width: auto;
   height: auto;
-  background: #000;
 }
 
 .gal-lightbox-thumbs {
