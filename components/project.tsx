@@ -36,7 +36,7 @@ const Project = memo(function Project({
         rounded-xl p-4
         shadow-lg cursor-pointer
         hover:shadow-xl
-        transition-[transform,box-shadow] duration-300
+        transition-shadow duration-300
         select-none relative group
         overflow-hidden
         flex flex-col justify-between

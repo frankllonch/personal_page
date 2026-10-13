@@ -10,13 +10,17 @@
   color: inherit;
 }
 
+/*
+ * The glyph spans are transparent to hit-testing. ScrambleText rewrites each
+ * span's text node on every tick, and WebKit drops a click whose mousedown
+ * node is gone by mouseup — so in Safari the header links only worked once
+ * the tween had finished. With the spans ignored, both ends of the click land
+ * on the persistent <p>. (The wrapper's pointermove still fires, so the
+ * scramble itself is unaffected.) No will-change: it promoted every glyph,
+ * halo included, to its own compositing layer.
+ */
 .char {
-  will-change: transform;
-  display: inline-block;
-}
-
-/* Force chars to inherit font when scrambled */
-.char {
+  pointer-events: none;
   font-family: inherit !important;
   line-height: inherit;
   letter-spacing: inherit;

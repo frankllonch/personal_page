@@ -41,10 +41,14 @@ export default function BackgroundShader() {
     const reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 
     const renderer = new Renderer({
-      dpr: Math.min(c.dpr * (window.devicePixelRatio || 1), 2),
-      // Transparent, so if the canvas is ever unpainted the page's own
-      // background shows through instead of an opaque black rectangle.
-      alpha: true,
+      // c.dpr scales the device ratio, capped at 1x: the effect is thin lines
+      // and looks the same at 1x, while 1.2x on a Retina Mac was 44% more
+      // fragments per frame for nothing.
+      dpr: Math.min(c.dpr * (window.devicePixelRatio || 1), 1),
+      // Opaque: the shader writes every pixel, and a non-opaque canvas costs
+      // a blend pass per frame. An upfront paint below covers first show.
+      alpha: false,
+      depth: false,
       antialias: false,
     });
     const gl = renderer.gl;
@@ -81,7 +85,10 @@ export default function BackgroundShader() {
 
     // Read scroll on the event and do nothing else here: touching layout
     // properties inside the render loop would force a reflow every frame.
+    // When the reader last moved, clicked or scrolled; drives the idle rate below.
+    let lastInputAt = -1e6;
     const onScroll = () => {
+      lastInputAt = performance.now();
       const max = document.documentElement.scrollHeight - window.innerHeight;
       scroll.current = max > 0 ? Math.min(1, Math.max(0, window.scrollY / max)) : 0;
     };
@@ -90,6 +97,7 @@ export default function BackgroundShader() {
     window.addEventListener("resize", onScroll, { passive: true });
 
     const onPointer = (e: PointerEvent) => {
+      lastInputAt = performance.now();
       pointer.current.x = e.clientX / window.innerWidth;
       pointer.current.y = 1 - e.clientY / window.innerHeight;
     };
@@ -98,6 +106,7 @@ export default function BackgroundShader() {
       cl[0] = e.clientX / window.innerWidth;
       cl[1] = 1 - e.clientY / window.innerHeight;
       clickAt.current = performance.now();
+      lastInputAt = clickAt.current;
     };
 
     // The background sits behind everything and is pointer-events:none, so
@@ -106,6 +115,12 @@ export default function BackgroundShader() {
     if (interactive) window.addEventListener("pointermove", onPointer, { passive: true });
     if (c.clickRipple > 0) window.addEventListener("pointerdown", onClick, { passive: true });
 
+    // At rest the scene drifts a fraction of a pixel per frame, so half the
+    // display rate is indistinguishable; the full rate comes back while the
+    // pointer, a click ripple or a scroll is moving things.
+    const IDLE_FRAME_MS = 1000 / 30;
+    const ACTIVE_FOR_MS = 1500;
+    let lastRender = -1e6;
     let raf = 0;
     const render = (t: number) => {
       raf = requestAnimationFrame(render);
@@ -114,6 +129,13 @@ export default function BackgroundShader() {
       // The initial paint below means a hidden tab still shows the scene
       // rather than an empty canvas when it comes back.
       if (document.hidden) return;
+
+      const active =
+        t - lastInputAt < ACTIVE_FOR_MS ||
+        t - clickAt.current < c.clickDuration * 1000 ||
+        Math.abs(scroll.current - scrollSmoothed.current) > 0.0005;
+      if (!active && t - lastRender < IDLE_FRAME_MS - 1) return;
+      lastRender = t;
 
       program.uniforms.iTime.value = reduced ? 0 : t * 0.001;
 

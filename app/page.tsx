@@ -37,26 +37,30 @@ const tileVariants: Variants = {
 // =============================
 // 3D Tilt Handler — RAF-throttled, disabled on touch devices
 // =============================
-let tiltRafId: number | null = null;
+// One pending frame per tile, not one shared across all of them: with a
+// shared id a fast sweep across the grid dropped every tile's frame but one.
+const tiltRaf = new WeakMap<HTMLElement, number>();
 
 function handle3DTilt(e: React.MouseEvent<HTMLDivElement>) {
-  if (tiltRafId !== null) return;
-
   // Capture everything before the RAF — React nulls currentTarget after the handler returns
   const clientX = e.clientX;
   const clientY = e.clientY;
   const target = e.currentTarget;
+  if (tiltRaf.has(target)) return;
 
-  tiltRafId = requestAnimationFrame(() => {
-    if (!target) { tiltRafId = null; return; }
+  tiltRaf.set(target, requestAnimationFrame(() => {
+    tiltRaf.delete(target);
     const rect = target.getBoundingClientRect();
     const x = clientX - rect.left;
     const y = clientY - rect.top;
     const rotateX = ((y - rect.height / 2) / 30) * -2;
     const rotateY = ((x - rect.width / 2) / 30) * 2;
+    // The leave handler eases the snap-back with a transform transition; it
+    // must not stay on while we write a new transform every frame, or each
+    // write retargets a 200ms animation and the tilt lags the pointer.
+    target.style.transition = "";
     target.style.transform = `perspective(1200px) rotateX(${rotateX}deg) rotateY(${rotateY}deg) scale(1.04)`;
-    tiltRafId = null;
-  });
+  }));
 }
 
 
@@ -95,7 +99,7 @@ export default function Home() {
           {/* BIO CARD */}
           <motion.div
             variants={tileVariants}
-            className="col-span-1 row-span-2 bg-transparent hover:bg-white/10 backdrop-blur-[2px] border border-white/20 rounded-3xl relative overflow-hidden group p-1 transition-colors duration-300 will-change-transform"
+            className="col-span-1 row-span-2 bg-transparent hover:bg-white/10 border border-white/20 rounded-3xl relative overflow-hidden group p-1 transition-colors duration-300 will-change-transform"
             onMouseMove={handle3DTilt}
             onMouseLeave={(e) => {
               e.currentTarget.style.transform = "perspective(1200px) rotateX(0deg) rotateY(0deg) scale(1)";
@@ -110,7 +114,7 @@ export default function Home() {
             <motion.div
               key={project.slug}
               variants={tileVariants}
-              className="bg-transparent hover:bg-white/10 backdrop-blur-[2px] border border-white/20 rounded-3xl shadow-xl p-4 group cursor-pointer relative overflow-hidden flex transition-colors duration-300 will-change-transform"
+              className="bg-transparent hover:bg-white/10 border border-white/20 rounded-3xl shadow-xl p-4 group cursor-pointer relative overflow-hidden flex transition-colors duration-300 will-change-transform"
               // Sole click owner. <Project> is presentational; handling the click in
               // both places turned one click into two window.open calls (two tabs).
               onClick={() => window.open(project.link, "_blank")}
