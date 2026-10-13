@@ -97,11 +97,18 @@ export default function ScrambledText({
       if (rafId !== null) cancelAnimationFrame(rafId);
       split.revert();
     };
-  }, [radius, duration, speed, scrambleChars]);
+  // `children` too: the header link swaps "gallery" for "projects" on
+  // navigation, and React's new text would otherwise replace the split chars
+  // the effect was animating, leaving a label that no longer scrambles.
+  }, [radius, duration, speed, scrambleChars, children]);
 
   return (
     <div ref={rootRef} className={`text-block ${className}`} style={style}>
-      <p>{children}</p>
+      {/* Keyed on the text: SplitText replaces the paragraph's content with
+          char spans, so a text update from React would land on a detached node
+          and the revert would bring the old words back. A new key gives React
+          a fresh <p> to split. */}
+      <p key={typeof children === "string" ? children : undefined}>{children}</p>
     </div>
   );
 }
