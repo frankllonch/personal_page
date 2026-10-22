@@ -7,9 +7,7 @@
     "build": "next build --turbopack",
     "start": "next start",
     "lint": "eslint",
-    "build:loader": "node scripts/build-loader.mjs",
-    "build:artwork": "node scripts/build-artwork.mjs",
-    "prebuild": "node scripts/build-artwork.mjs"
+    "build:loader": "node scripts/build-loader.mjs"
   },
   "dependencies": {
     "framer-motion": "^12.23.24",
@@ -18,8 +16,7 @@
     "next-themes": "^0.4.6",
     "ogl": "^1.0.11",
     "react": "19.1.0",
-    "react-dom": "19.1.0",
-    "sharp": "^0.34.5"
+    "react-dom": "19.1.0"
   },
   "devDependencies": {
     "@eslint/eslintrc": "^3",
@@ -29,6 +26,7 @@
     "@types/react-dom": "^19",
     "eslint": "^9",
     "eslint-config-next": "15.5.4",
+    "sharp": "^0.34.5",
     "tailwindcss": "^4",
     "typescript": "^5"
   }

@@ -44,5 +44,6 @@ To add/edit portfolio content, only these files need to change.
 
 - Color scheme: `#000000` background, `#F4D35E` yellow accent
 - Inter font loaded locally from `public/fonts/` (weights 300–800)
-- Cards use backdrop blur + semi-transparent borders
+- Cards are transparent with semi-transparent borders (no backdrop blur: too costly over the live shader)
+- The gallery is a separate repo/site; the top bar links to it (`GALLERY_URL` in `components/top-bar.tsx`)
 - Path alias `@/` maps to the repo root

@@ -1,7 +1,6 @@
 "use client";
 
 import dynamic from "next/dynamic";
-import { usePathname } from "next/navigation";
 import { useEffect, useState } from "react";
 import { isIntroDone, onIntroDone } from "@/lib/intro";
 
@@ -13,19 +12,14 @@ const SAFETY_BACKGROUND_MS = 9000;
 /**
  * Mounts the shader background once the intro loader has left.
  *
- * Lives in the layout, but not every page wants it: the gallery is a plain
- * white sheet (see gallery.css), so there nothing is mounted — or fetched.
- * Held back until the intro is gone: compiling and running a full-screen
- * WebGL shader while the loader animates made the intro stutter badly on
- * Safari. It fades itself in on mount.
+ * Lives in the layout. Held back until the intro is gone: compiling and
+ * running a full-screen WebGL shader while the loader animates made the intro
+ * stutter badly on Safari. It fades itself in on mount.
  */
 export default function BackgroundMount() {
-  const pathname = usePathname();
-  const plain = pathname === "/gallery" || pathname?.startsWith("/gallery/");
   const [ready, setReady] = useState(false);
 
   useEffect(() => {
-    if (plain) return;
     // Warm the background's chunks while the intro plays. Fetching and parsing
     // them is cheap; it's creating the WebGL context and compiling the shader
     // that costs, and that still waits for the intro to finish.
@@ -43,7 +37,7 @@ export default function BackgroundMount() {
       off();
       window.clearTimeout(t);
     };
-  }, [plain]);
+  }, []);
 
-  return ready && !plain ? <SiteBackground /> : null;
+  return ready ? <SiteBackground /> : null;
 }

@@ -74,7 +74,7 @@ export default function Home() {
   return (
     <main className="relative min-h-screen text-white bg-transparent overflow-visible z-10">
 
-      {/* The background and the top bar come from app/layout.tsx, shared with the gallery. */}
+      {/* The background and the top bar come from app/layout.tsx. */}
 
       {/* GRID OF CONTENT */}
       <section className="max-w-7xl mx-auto px-6 pt-24 sm:pt-28 pb-12 relative z-10">

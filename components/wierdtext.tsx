@@ -97,9 +97,8 @@ export default function ScrambledText({
       if (rafId !== null) cancelAnimationFrame(rafId);
       split.revert();
     };
-  // `children` too: the header link swaps "gallery" for "projects" on
-  // navigation, and React's new text would otherwise replace the split chars
-  // the effect was animating, leaving a label that no longer scrambles.
+  // `children` too: if the text changes, React's new text would otherwise
+  // replace the split chars the effect was animating.
   }, [radius, duration, speed, scrambleChars, children]);
 
   return (

@@ -2,7 +2,6 @@
 
 import Link from "next/link";
 import Image from "next/image";
-import { usePathname } from "next/navigation";
 import { motion, useScroll, useMotionValueEvent } from "framer-motion";
 import { useRef, useState } from "react";
 import ScrambledText from "@/components/wierdtext";
@@ -12,10 +11,12 @@ import ScrambledText from "@/components/wierdtext";
  * No bar behind them — they sit on the page — and they slide away on scroll
  * down and come back on scroll up.
  *
- * Lives in the layout so the home page and the gallery share one header; the
- * only thing that changes between them is where the link beside the signature
- * points.
+ * The gallery is its own site (a separate repo and deployment); the link
+ * beside the signature goes there.
  */
+
+/** Where the gallery lives. Change here when the deployment URL changes. */
+const GALLERY_URL = "https://gallery-frankllonch.vercel.app";
 
 // Shared look and feel for the square tiles (socials + CV): only sizing and
 // centring, no chip behind them.
@@ -39,11 +40,8 @@ const SOCIALS = [
 ];
 
 export default function TopBar() {
-  const pathname = usePathname();
-  const onGallery = pathname === "/gallery" || pathname?.startsWith("/gallery/");
-  // The gallery is a white sheet with no shader: black type, no halo. No
-  // hover colour anywhere — the scramble is the only hover effect up here.
-  const ink = onGallery ? "text-black" : "on-shader text-white";
+  // No hover colour anywhere — the scramble is the only hover effect up here.
+  const ink = "on-shader text-white";
 
   const [hidden, setHidden] = useState(false);
   const { scrollY } = useScroll();
@@ -104,20 +102,16 @@ export default function TopBar() {
             </div>
           </Link>
 
-          {/* GALLERY ⇄ PROJECTS */}
-          <Link
-            href={onGallery ? "/" : "/gallery"}
-            aria-current={onGallery ? "page" : undefined}
-            className="shrink-0"
-          >
+          {/* GALLERY — its own site */}
+          <a href={GALLERY_URL} className="shrink-0">
             {/* A div, not the <a>: globals.css colours every bare <a> with the
                 accent, outside any layer, so a Tailwind colour on it loses. */}
             <div className={`${ink} font-bold text-xs sm:text-sm tracking-wide`}>
               <ScrambledText className="ink-inherit font-inherit" radius={20} duration={0.4} speed={0.5} scrambleChars="*">
-                {onGallery ? "projects" : "gallery"}
+                gallery
               </ScrambledText>
             </div>
-          </Link>
+          </a>
         </div>
 
         {/* SOCIALS + CV */}
@@ -132,8 +126,7 @@ export default function TopBar() {
               transition={TILE_SPRING}
               className={TILE_CLASS}
             >
-              {/* The GitHub mark is white; on the gallery's white sheet it is inverted. */}
-              <Image src={s.img} alt={s.alt} width={18} height={18} className={onGallery && s.alt === "GitHub" ? "invert" : undefined} />
+              <Image src={s.img} alt={s.alt} width={18} height={18} />
             </motion.a>
           ))}
 
