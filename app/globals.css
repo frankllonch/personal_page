@@ -5,6 +5,7 @@
 @font-face { font-family: "Inter"; src: url("/fonts/inter/Inter-Italic.woff2") format("woff2"); font-weight: 400; font-style: italic; font-display: swap; }
 @font-face { font-family: "Inter"; src: url("/fonts/inter/Inter-Bold.woff2") format("woff2"); font-weight: 700; font-style: normal; font-display: swap; }
 @font-face { font-family: "Inter"; src: url("/fonts/inter/Inter-ExtraBold.woff2") format("woff2"); font-weight: 800; font-style: normal; font-display: swap; }
+@font-face { font-family: "Inter"; src: url("/fonts/inter/Inter-Black.woff2") format("woff2"); font-weight: 900; font-style: normal; font-display: swap; }
 
 /*
  * One sheet, two inks. Black page, white type, hairlines between things —

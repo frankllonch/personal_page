@@ -11,18 +11,23 @@ const NAV = [
   { label: "Contact", href: "#contact" },
 ];
 
-/** A fixed hairline bar: the signature, the sections, the links. */
+/**
+ * The signature, the sections, the links — fixed over the page with nothing
+ * behind them. The bar is drawn in `difference`, so it is white over the
+ * black sheet and goes black over whatever white scrolls under it (an
+ * inverted box, an image), instead of sitting on a strip of its own.
+ */
 export default function TopBar() {
   return (
-    <header className="fixed top-0 inset-x-0 z-50 bg-black border-b border-line">
+    <header className="fixed top-0 inset-x-0 z-50 mix-blend-difference text-white">
       <div className="mx-auto max-w-[1600px] px-4 sm:px-6 h-12 flex items-center justify-between gap-6">
-        <div className="flex items-center gap-6 sm:gap-10 min-w-0">
-          <Link href="/" aria-label="Top" className="font-extrabold text-xl tracking-tight shrink-0">
+        <div className="flex items-center gap-6 md:gap-10 min-w-0">
+          <Link href="/" aria-label="Top" className="font-black text-2xl tracking-tight shrink-0">
             <ScrambledText radius={30} duration={0.4} speed={0.5} scrambleChars="*">
               {site.signature}
             </ScrambledText>
           </Link>
-          <nav className="hidden sm:flex items-center gap-6 label">
+          <nav className="hidden md:flex items-center gap-6 label">
             {NAV.map((n) => (
               <a key={n.href} href={n.href}>
                 <ScrambledText radius={20} duration={0.4} speed={0.5} scrambleChars="*">
