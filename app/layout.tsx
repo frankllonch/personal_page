@@ -1,20 +1,15 @@
 import type { Metadata } from "next";
 import "./globals.css";
 import Loader from "@/components/loader";
-import BackgroundMount from "@/components/background-mount";
 import TopBar from "@/components/top-bar";
 
 export const metadata: Metadata = {
-  title: "Frank Llonch - Mathematical Engineer",
+  title: "Frank Llonch — Mathematical Engineer",
   description:
-    "Barcelona-born engineering student building data systems, AI tools, and clean interfaces.",
+    "Mathematical engineer from Barcelona building data systems, AI tools and the occasional pointless app.",
 };
 
-export default function RootLayout({
-  children,
-}: {
-  children: React.ReactNode;
-}) {
+export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="en">
       <head>
@@ -27,8 +22,6 @@ export default function RootLayout({
       </head>
       <body>
         <Loader />
-        {/* Shared by every page: the shader behind, the signature and links above. */}
-        <BackgroundMount />
         <TopBar />
         {children}
       </body>

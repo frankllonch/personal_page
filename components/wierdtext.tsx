@@ -39,8 +39,12 @@ export default function ScrambledText({
     const paragraph = rootRef.current.querySelector("p");
     if (!paragraph) return;
 
+    // Words as well as chars: the chars are inline-block so they can move, and
+    // on their own they would wrap mid-word ("fr" / "om"). The word wrapper
+    // keeps each word on one line.
     const split = SplitText.create(paragraph, {
-      type: "chars",
+      type: "words,chars",
+      wordsClass: "word",
       charsClass: "char",
     });
 

@@ -1,6 +1,6 @@
-# Gabriel Ferraté - Personal Portfolio (Next.js)
+# Frank Llonch — personal page
 
-This is a modern Next.js version of the personal portfolio website, built with TypeScript and Tailwind CSS.
+One page: a statement, the projects, experience, education, contact. Next.js, Tailwind, Inter, and a text scramble. Content lives in `lib/data.ts` and `lib/projects.ts`.
 
 ## 🚀 Getting Started
 

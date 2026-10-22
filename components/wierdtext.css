@@ -1,50 +1,32 @@
-
-/* wierdtext.css */
-
+/* The scramble takes every typographic property from its parent; it is an
+   effect on text that is already styled, never a style of its own. */
 .text-block {
-  margin: 0.2vw;
-  max-width: 800px;
-  font-family: monospace;
-  /* Inherit, so the page theme decides. This was hard-coded white for the old
-     dark theme and fought every colour set on the element. */
+  margin: 0;
+  color: inherit;
+}
+
+.text-block p {
+  margin: 0;
+  font: inherit;
+  letter-spacing: inherit;
   color: inherit;
 }
 
 /*
  * The glyph spans are transparent to hit-testing. ScrambleText rewrites each
  * span's text node on every tick, and WebKit drops a click whose mousedown
- * node is gone by mouseup — so in Safari the header links only worked once
- * the tween had finished. With the spans ignored, both ends of the click land
- * on the persistent <p>. (The wrapper's pointermove still fires, so the
- * scramble itself is unaffected.) No will-change: it promoted every glyph,
- * halo included, to its own compositing layer.
+ * node is gone by mouseup — with the spans ignored, both ends of the click
+ * land on the persistent <p>.
  */
+.word {
+  display: inline-block;
+  white-space: nowrap;
+}
+
 .char {
   pointer-events: none;
-  font-family: inherit !important;
-  line-height: inherit;
-  letter-spacing: inherit;
-  font-weight: inherit;
   display: inline-block;
   white-space: pre;
+  font: inherit;
+  letter-spacing: inherit;
 }
-
-.text-block p {
-    font-size: inherit;   /* <-- allow Tailwind to control size */
-    line-height: inherit; /* optional, smoother scaling */
-  }
-
-/* Opt-in: the paragraph takes its colour and weight from the wrapper too,
-   instead of the bare `p` rule in globals.css. (0,1,1) unlayered, so it wins. */
-.text-block.ink-inherit p {
-  font-weight: inherit;
-  color: inherit;
-}
-
-/* Opt-in: keep the page font and no margin — for the small header links,
-   which should scramble like the signature but not turn monospace. */
-.text-block.font-inherit {
-  font-family: inherit;
-  margin: 0;
-}
-

@@ -1,201 +1,99 @@
-"use client";
-
-import { motion } from "framer-motion";
-
-// Content
-import Project from "@/components/project";
-import Timeline from "@/components/timeline";
-import BioCard from "@/components/bio_card";
+import Section from "@/components/section";
+import ProjectBox from "@/components/project-box";
+import EntryBox from "@/components/entry-box";
 import ScrambledText from "@/components/wierdtext";
-
-// Data
 import { projects } from "@/lib/projects";
-import { works, education } from "@/lib/data";
+import { site, works, education } from "@/lib/data";
 
-import type { Variants } from "framer-motion";
-
-// =============================
-// ANIMATION VARIANTS
-// =============================
-const containerVariants: Variants = {
-  hidden: { opacity: 0 },
-  visible: {
-    opacity: 1,
-    transition: { staggerChildren: 0.08, ease: [0.25, 0.1, 0.25, 1] },
-  },
-};
-
-const tileVariants: Variants = {
-  hidden: { opacity: 0, y: 26 },
-  visible: {
-    opacity: 1,
-    y: 0,
-    transition: { duration: 0.45, ease: [0.25, 0.1, 0.25, 1] },
-  },
-};
-
-// =============================
-// 3D Tilt Handler — RAF-throttled, disabled on touch devices
-// =============================
-// One pending frame per tile, not one shared across all of them: with a
-// shared id a fast sweep across the grid dropped every tile's frame but one.
-const tiltRaf = new WeakMap<HTMLElement, number>();
-
-function handle3DTilt(e: React.MouseEvent<HTMLDivElement>) {
-  // Capture everything before the RAF — React nulls currentTarget after the handler returns
-  const clientX = e.clientX;
-  const clientY = e.clientY;
-  const target = e.currentTarget;
-  if (tiltRaf.has(target)) return;
-
-  tiltRaf.set(target, requestAnimationFrame(() => {
-    tiltRaf.delete(target);
-    const rect = target.getBoundingClientRect();
-    const x = clientX - rect.left;
-    const y = clientY - rect.top;
-    const rotateX = ((y - rect.height / 2) / 30) * -2;
-    const rotateY = ((x - rect.width / 2) / 30) * 2;
-    // The leave handler eases the snap-back with a transform transition; it
-    // must not stay on while we write a new transform every frame, or each
-    // write retargets a 200ms animation and the tilt lags the pointer.
-    target.style.transition = "";
-    target.style.transform = `perspective(1200px) rotateX(${rotateX}deg) rotateY(${rotateY}deg) scale(1.04)`;
-  }));
-}
-
-
-
-// =============================
-// PAGE COMPONENT
-// =============================
+/**
+ * One page, top to bottom: a statement, the projects, where I have worked,
+ * where I have studied, how to reach me. Everything on it is text in a
+ * hairline grid; the only motion is the scramble on hover.
+ */
 export default function Home() {
-  const currentYear = new Date().getFullYear();
+  const year = new Date().getFullYear();
 
   return (
-    <main className="relative min-h-screen text-white bg-transparent overflow-visible z-10">
-
-      {/* The background and the top bar come from app/layout.tsx. */}
-
-      {/* GRID OF CONTENT */}
-      <section className="max-w-7xl mx-auto px-6 pt-24 sm:pt-28 pb-12 relative z-10">
-        <div className="flex justify-center mb-8">
-          <ScrambledText
-            radius={30}
-            duration={0.8}
-            speed={0.5}
-            scrambleChars="*"
-            className="on-shader text-6xl font-extrabold tracking-tight text-center text-white"
-          >
-            Projects
+    <main className="mx-auto max-w-[1600px] px-4 sm:px-6 pt-12">
+      {/* STATEMENT */}
+      <section className="pt-10 sm:pt-16 pb-14 sm:pb-20">
+        <h1 className="font-bold tracking-tight leading-[1.04] text-[clamp(1.55rem,3.6vw,3.3rem)] max-w-[30ch]">
+          <ScrambledText radius={60} duration={0.6} speed={0.4} scrambleChars="*">
+            {site.statement}
           </ScrambledText>
-        </div>
-
-        <motion.div
-          className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6 auto-rows-[180px] sm:auto-rows-[200px]"
-          variants={containerVariants}
-          initial="hidden"
-          animate="visible"
-        >
-          {/* BIO CARD */}
-          <motion.div
-            variants={tileVariants}
-            className="col-span-1 row-span-2 bg-transparent hover:bg-white/10 border border-white/20 rounded-3xl relative overflow-hidden group p-1 transition-colors duration-300 will-change-transform"
-            onMouseMove={handle3DTilt}
-            onMouseLeave={(e) => {
-              e.currentTarget.style.transform = "perspective(1200px) rotateX(0deg) rotateY(0deg) scale(1)";
-              e.currentTarget.style.transition = "transform 200ms ease";
-            }}
-          >
-            <BioCard />
-          </motion.div>
-
-          {/* PROJECTS */}
-          {projects.map((project) => (
-            <motion.div
-              key={project.slug}
-              variants={tileVariants}
-              className="bg-transparent hover:bg-white/10 border border-white/20 rounded-3xl shadow-xl p-4 group cursor-pointer relative overflow-hidden flex transition-colors duration-300 will-change-transform"
-              // Sole click owner. <Project> is presentational; handling the click in
-              // both places turned one click into two window.open calls (two tabs).
-              onClick={() => window.open(project.link, "_blank")}
-              onMouseMove={handle3DTilt}
-              onMouseLeave={(e) => {
-                e.currentTarget.style.transform = "perspective(1200px) rotateX(0deg) rotateY(0deg) scale(1)";
-                e.currentTarget.style.transition = "transform 200ms ease";
-              }}
-            >
-              <Project {...project} />
-            </motion.div>
+        </h1>
+        <dl className="mt-10 sm:mt-14 grid grid-cols-2 lg:grid-cols-4 gap-x-6 gap-y-6">
+          {site.facts.map((f) => (
+            <div key={f.label} className="rule pt-2">
+              <dt className="label soft">{f.label}</dt>
+              <dd className="mt-1 text-[15px] leading-snug">{f.value}</dd>
+            </div>
           ))}
-        </motion.div>
+        </dl>
       </section>
 
-      {/* WORK EXPERIENCE */}
-      <section className="py-10 max-w-7xl mx-auto px-6 relative z-10">
-        <div className="flex justify-center mb-6">
-          <ScrambledText
-            radius={30}
-            duration={0.8}
-            speed={0.5}
-            scrambleChars="*"
-            className="on-shader text-6xl font-extrabold text-center text-white"
-          >
-            Work Experience
-          </ScrambledText>
+      {/* PROJECTS */}
+      <Section id="projects" index="01" title="Projects" aside={`${projects.length} things, newest first`}>
+        <div className="boxes grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+          {projects.map((p, i) => (
+            <ProjectBox key={p.slug} project={p} index={i} />
+          ))}
         </div>
-        <Timeline items={works} />
-      </section>
+      </Section>
+
+      {/* EXPERIENCE */}
+      <Section id="experience" index="02" title="Experience" aside="Most recent first">
+        <div className="boxes grid-cols-1 sm:grid-cols-3">
+          {works.map((w) => (
+            <EntryBox key={w.name} entry={w} />
+          ))}
+        </div>
+      </Section>
 
       {/* EDUCATION */}
-      <section className="py-10 max-w-7xl mx-auto px-6 relative z-10">
-        <div className="flex justify-center mb-6">
-          <ScrambledText
-            radius={30}
-            duration={0.8}
-            speed={0.5}
-            scrambleChars="*"
-            className="on-shader text-6xl font-extrabold text-center text-white"
-          >
-            Education
-          </ScrambledText>
+      <Section id="education" index="03" title="Education" aside="Most recent first">
+        <div className="boxes grid-cols-1 sm:grid-cols-3">
+          {education.map((e) => (
+            <EntryBox key={e.name} entry={e} />
+          ))}
         </div>
-        <Timeline items={education} />
-      </section>
+      </Section>
 
-          <footer className="on-shader py-10 text-center text-white text-sm relative z-10">
-      <div className="flex justify-center items-center gap-4 flex-wrap">
-
-        {/* Copyright */}
-        <span className="opacity-80">
-          Frank Llonch © {currentYear}
-        </span>
-
-        <span className="opacity-40">•</span>
-
-        {/* GitHub Repo */}
-        <a
-          href="https://github.com/frankllonch/personal_page"
-          target="_blank"
-          rel="noopener noreferrer"
-          className="hover:text-[#F4D35E] transition-colors duration-300"
-        >
-          Fork this project ↗
-        </a>
-
-        <span className="opacity-40">•</span>
-
-        {/* Inspiration */}
-        <a
-          href="https://gabrielferrate.com"
-          target="_blank"
-          rel="noopener noreferrer"
-          className="hover:text-[#F4D35E] transition-colors duration-300"
-        >
-          Inspired by gabrielferrate.com ↗
-        </a>
-
-      </div>
-    </footer>
+      {/* CONTACT / COLOPHON */}
+      <footer id="contact" className="rule pt-3 pb-16 grid grid-cols-1 md:grid-cols-3 gap-10">
+        <div>
+          <div className="label soft">Contact</div>
+          <a href={`mailto:${site.email}`} className="mt-2 block font-bold text-[clamp(1.1rem,2.2vw,1.9rem)] tracking-tight">
+            <ScrambledText radius={40} duration={0.5} speed={0.5} scrambleChars="*">
+              {site.email}
+            </ScrambledText>
+          </a>
+        </div>
+        <div>
+          <div className="label soft">Elsewhere</div>
+          <ul className="mt-2 space-y-1 text-[15px]">
+            {site.links.map((l) => (
+              <li key={l.href}>
+                <a href={l.href} target={l.href.startsWith("/") || l.href.startsWith("mailto") ? undefined : "_blank"} rel="noopener noreferrer">
+                  <ScrambledText radius={20} duration={0.4} speed={0.5} scrambleChars="*">
+                    {l.label}
+                  </ScrambledText>
+                </a>
+              </li>
+            ))}
+          </ul>
+        </div>
+        <div className="text-[15px] leading-snug soft md:text-right">
+          <div className="label">Colophon</div>
+          <p className="mt-2">{site.colophon}</p>
+          <p className="mt-2">
+            © {year} {site.name}.{" "}
+            <a href="https://github.com/frankllonch/personal_page" target="_blank" rel="noopener noreferrer" className="underline underline-offset-4">Source</a>
+            {" · "}
+            <a href="https://gabrielferrate.com" target="_blank" rel="noopener noreferrer" className="underline underline-offset-4">After gabrielferrate.com</a>
+          </p>
+        </div>
+      </footer>
     </main>
   );
 }
