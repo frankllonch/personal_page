@@ -7,16 +7,10 @@ import { useRef, useState } from "react";
 import ScrambledText from "@/components/wierdtext";
 
 /**
- * The signature, the gallery link and the socials, fixed over every page.
- * No bar behind them — they sit on the page — and they slide away on scroll
- * down and come back on scroll up.
- *
- * The gallery is its own site (a separate repo and deployment); the link
- * beside the signature goes there.
+ * The signature and the socials, fixed over every page. No bar behind them —
+ * they sit on the page — and they slide away on scroll down and come back on
+ * scroll up. (The gallery is a separate site and is deliberately not linked.)
  */
-
-/** Where the gallery lives. Change here when the deployment URL changes. */
-const GALLERY_URL = "https://gallery-frankllonch.vercel.app";
 
 // Shared look and feel for the square tiles (socials + CV): only sizing and
 // centring, no chip behind them.
@@ -101,17 +95,6 @@ export default function TopBar() {
               </ScrambledText>
             </div>
           </Link>
-
-          {/* GALLERY — its own site */}
-          <a href={GALLERY_URL} className="shrink-0">
-            {/* A div, not the <a>: globals.css colours every bare <a> with the
-                accent, outside any layer, so a Tailwind colour on it loses. */}
-            <div className={`${ink} font-bold text-xs sm:text-sm tracking-wide`}>
-              <ScrambledText className="ink-inherit font-inherit" radius={20} duration={0.4} speed={0.5} scrambleChars="*">
-                gallery
-              </ScrambledText>
-            </div>
-          </a>
         </div>
 
         {/* SOCIALS + CV */}
