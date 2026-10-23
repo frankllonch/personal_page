@@ -33,7 +33,7 @@ export default function Home() {
       </section>
 
       {/* PROJECTS */}
-      <Section id="projects" index="01" title="Projects" aside={`${projects.length} things, newest first`}>
+      <Section id="projects" index="01" title="Projects">
         <div className="boxes grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
           {projects.map((p, i) => (
             <ProjectBox key={p.slug} project={p} index={i} />
@@ -42,7 +42,7 @@ export default function Home() {
       </Section>
 
       {/* EXPERIENCE */}
-      <Section id="experience" index="02" title="Experience" aside="Most recent first">
+      <Section id="experience" index="02" title="Experience">
         <div className="boxes grid-cols-1 sm:grid-cols-3">
           {works.map((w) => (
             <EntryBox key={w.name} entry={w} />
@@ -51,7 +51,7 @@ export default function Home() {
       </Section>
 
       {/* EDUCATION */}
-      <Section id="education" index="03" title="Education" aside="Most recent first">
+      <Section id="education" index="03" title="Education">
         <div className="boxes grid-cols-1 sm:grid-cols-3">
           {education.map((e) => (
             <EntryBox key={e.name} entry={e} />
@@ -84,9 +84,7 @@ export default function Home() {
           </ul>
         </div>
         <div className="text-[15px] leading-snug soft md:text-right">
-          <div className="label">Colophon</div>
-          <p className="mt-2">{site.colophon}</p>
-          <p className="mt-2">
+          <p>
             © {year} {site.name}.{" "}
             <a href="https://github.com/frankllonch/personal_page" target="_blank" rel="noopener noreferrer" className="underline underline-offset-4">Source</a>
             {" · "}

@@ -24,7 +24,6 @@ export const site = {
     { label: "Email", href: "mailto:llonchfrank@gmail.com" },
     { label: "CV", href: "/cv.pdf" },
   ],
-  colophon: "Set in Inter. Built with Next.js and a little GSAP. No trackers, no cookies.",
 } as const;
 
 export interface Entry {

@@ -22,7 +22,9 @@ export default function TopBar() {
     <header className="fixed top-0 inset-x-0 z-50 mix-blend-difference text-white">
       <div className="mx-auto max-w-[1600px] px-4 sm:px-6 h-12 flex items-center justify-between gap-6">
         <div className="flex items-center gap-6 md:gap-10 min-w-0">
-          <Link href="/" aria-label="Top" className="font-black text-2xl tracking-tight shrink-0">
+          {/* THE SIGNATURE — size and weight live on this line: text-3xl / sm:text-4xl
+              (Tailwind sizes) and font-black (Inter 900). */}
+          <Link href="/" aria-label="Top" className="font-black text-3xl sm:text-4xl tracking-tighter shrink-0">
             <ScrambledText radius={30} duration={0.4} speed={0.5} scrambleChars="*">
               {site.signature}
             </ScrambledText>

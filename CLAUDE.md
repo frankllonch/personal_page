@@ -23,7 +23,7 @@ No test suite is configured.
 
 All copy lives in two files; edit these and nothing else to change what the page says:
 
-- `lib/data.ts` — `site` (statement, facts, links, colophon), `works`, `education`
+- `lib/data.ts` — `site` (statement, facts, links), `works`, `education`
 - `lib/projects.ts` — the project boxes (title, description, link, year, tags, status)
 
 ### Components
