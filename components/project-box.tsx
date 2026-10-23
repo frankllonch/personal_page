@@ -22,7 +22,7 @@ export default function ProjectBox({ project, index }: { project: Project; index
       <p className="text-[15px] leading-snug max-w-[34ch]">{project.description}</p>
       <div className="mt-auto pt-6 flex items-end justify-between gap-4 label soft">
         <span>{project.tags.join("  ·  ")}</span>
-        <span aria-hidden="true">↗</span>
+        <span aria-hidden="true" className="box-arrow">↗</span>
       </div>
     </a>
   );

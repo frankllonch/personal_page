@@ -21,7 +21,7 @@ export default function EntryBox({ entry }: { entry: Entry }) {
       <p className="mt-3 text-[14px] leading-snug soft max-w-[36ch]">{entry.note}</p>
       <div className="mt-auto pt-6 flex items-end justify-between label soft">
         <span>{entry.place}</span>
-        <span aria-hidden="true">↗</span>
+        <span aria-hidden="true" className="box-arrow">↗</span>
       </div>
     </a>
   );

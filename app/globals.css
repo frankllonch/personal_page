@@ -104,6 +104,23 @@ a.box:focus-visible .soft {
   transition: color 0.18s ease;
 }
 
+/* The arrow in a box's corner turns half a circle on hover. */
+.box-arrow {
+  display: inline-block;
+  transition: transform 0.45s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+a.box:hover .box-arrow,
+a.box:focus-visible .box-arrow {
+  transform: rotate(180deg);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .box-arrow {
+    transition: none;
+  }
+}
+
 /* Hairline above a section, with the number and the title on it. */
 .rule {
   border-top: 1px solid var(--color-line);
